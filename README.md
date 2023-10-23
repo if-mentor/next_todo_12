@@ -6,8 +6,13 @@
   - テラジマコウヘイ
   
 ## 使用技術
+- Javascript (https://developer.mozilla.org/ja/docs/Web/JavaScript)
+- Typescript (https://www.typescriptlang.org)
 - React.js (https://github.com/facebook/react)
 - Next.js (https://github.com/vercel/next.js)
+- Firebase (https://firebase.google.com)
+- Vercel (https://vercel.com)
+- Github (https://github.co.jp)
 
 ## 推奨 VScode 拡張機能
 - [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph&ssr=false#qna) コミットの一覧 → 詳細を閲覧できる
