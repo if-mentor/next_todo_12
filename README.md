@@ -57,6 +57,8 @@ Todo リストの作成を通じて、React.js、Next.js の基礎、Git,github 
 5. `npm run dev`
    - 上記を実行し、`http://localhost:3000` 以下画像の画面が起動できるか確認をよろしくお願いします。
 
+![localhost 3000 start display](https://github.com/if-mentor/next_todo_12/assets/119676984/691fb3e0-b3f3-4264-a455-8800ffa60b03)
+
 ## 開発 Tips
 
 ### 1. プルリクエスト前の作業
