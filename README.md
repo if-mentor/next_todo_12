@@ -17,8 +17,7 @@
 ※ おすすめしたいものがあれば適宜追加する
 
 ## バージョン情報
-volta で管理
-https://volta.sh
+[volta](https://volta.sh) で管理
 
 ```
 "node": "18.18.2",
@@ -56,7 +55,7 @@ Todo リストの作成を通じて、React.js、Next.js の基礎、Git,github 
     - package.jsonにある各パッケージの install
     
 5. `npm run dev`
-   - 上記を実行し、`http://localhost:3000`が起動できるか確認をよろしくお願いします。
+   - 上記を実行し、`http://localhost:3000` 以下画像の画面が起動できるか確認をよろしくお願いします。
 
 ## 開発 Tips
 
