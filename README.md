@@ -109,4 +109,4 @@ issue#３ Todo の作成画面の実装の場合
 プレフィックス + 日本語で端的に
 
 **＜具体例＞**
-`git commit -m 'feature/todotop 作成' `
+`git commit -m 'Top画面 作成' `
