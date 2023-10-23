@@ -29,7 +29,7 @@ https://docs.npmjs.com/cli/v9/commands/npm-version
 
 ## ライブラリ
 ```
-"storybook": "7.2.1"
+"storybook": "7.5.1"
 https://storybook.js.org
 
 チュートリアル
