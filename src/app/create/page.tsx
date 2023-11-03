@@ -9,7 +9,15 @@ const create = () =>{
           </Box>
           <Spacer/>
           <Box marginRight="70px">
-            <Button w="120px" h="56px" bg="#D9D9D9" borderWidth="1px" borderRadius="10px" cursor="pointer" fontSize="24px" fontWeight="bold">
+            <Button 
+              w="120px" 
+              h="56px" 
+              bg="#D9D9D9" 
+              borderWidth="1px" 
+              borderRadius="10px" 
+              cursor="pointer" 
+              fontSize="24px" 
+              fontWeight="bold">
               LOGOUT
             </Button>
           </Box>
@@ -17,7 +25,14 @@ const create = () =>{
 
         <Flex mt={4} ml="100px" >
           <Box ml="968px">
-            <Button w="112px" h="40px" bg="#68D391" borderRadius="20px" cursor="pointer" fontWeight="bold" fontSize="18px">
+            <Button 
+              w="112px" 
+              h="40px" 
+              bg="#68D391" 
+              borderRadius="20px" 
+              cursor="pointer" 
+              fontWeight="bold" 
+              fontSize="18px">
               BACK
             </Button>
           </Box>
