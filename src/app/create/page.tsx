@@ -3,12 +3,12 @@ import { Box, Button, Flex, Radio, RadioGroup, Spacer, Stack, Text, Textarea } f
 const create = () =>{
   return (
       <Box as="main" w="1280px" mx="auto">
-        <Flex as="header" bg="#68D391" alignItems="center" px={5}>
+        <Flex as="header" h='80px' bg="#68D391" alignItems="center" px={5}>
           <Box w="127px" h="56px" display="flex" alignItems="center" justifyContent="center">
             <Text fontSize="48px" fontWeight="bold" marginLeft="150px">TODO</Text>
           </Box>
           <Spacer/>
-          <Box marginRight="70px">
+          <Box marginRight="50px">
             <Button 
               w="120px" 
               h="56px" 
