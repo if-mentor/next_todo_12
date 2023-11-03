@@ -1,9 +1,9 @@
-import { Box, Button, ChakraProvider, Flex, Radio, RadioGroup, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
+import { Box, Button, Flex, Radio, RadioGroup, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 
 const create = () =>{
   return (
-      <Box w="1280px" mx="auto">
-        <Flex w="1280px" h="80px" bg="#68D391" alignItems="center" px={5}>
+      <Box as="main" w="1280px" mx="auto">
+        <Flex as="header" w="1280px" h="80px" bg="#68D391" alignItems="center" px={5}>
           <Box w="127px" h="56px" display="flex" alignItems="center" justifyContent="center">
             <Text fontSize="48px" fontWeight="bold" marginLeft="150px">TODO</Text>
           </Box>
@@ -38,7 +38,7 @@ const create = () =>{
           </Box>
         </Flex>
 
-        <Box mt={2} ml="100px">
+        <Box as="section" mt={2} ml="100px">
           <Text fontSize="24px" fontWeight="bold">TITLE</Text>
           <Textarea 
             w="1080px" 
@@ -52,7 +52,7 @@ const create = () =>{
             borderRadius="12px"/>
         </Box>
 
-        <Box mt={6} ml="100px">
+        <Box as="section" mt={6} ml="100px">
           <Text fontSize="24px" fontWeight="bold">DETAIL</Text>
           <Textarea 
             w="1080px" 
@@ -66,7 +66,7 @@ const create = () =>{
             borderRadius="12px"/>
         </Box>
 
-        <Box mt={6} ml="100px">
+        <Box as="section" mt={6} ml="100px">
           <Text fontSize="24px" fontWeight="bold">PRIORITY</Text>
           <RadioGroup defaultValue="High">
             <Stack direction="row">
