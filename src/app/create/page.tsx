@@ -3,7 +3,7 @@ import { Box, Button, Flex, Radio, RadioGroup, Spacer, Stack, Text, Textarea } f
 const create = () =>{
   return (
       <Box as="main" w="1280px" mx="auto">
-        <Flex as="header" w="1280px" h="80px" bg="#68D391" alignItems="center" px={5}>
+        <Flex as="header" bg="#68D391" alignItems="center" px={5}>
           <Box w="127px" h="56px" display="flex" alignItems="center" justifyContent="center">
             <Text fontSize="48px" fontWeight="bold" marginLeft="150px">TODO</Text>
           </Box>
@@ -44,7 +44,7 @@ const create = () =>{
             w="1080px" 
             h="72px" 
             size="lg" 
-            fontSize="16px" 
+            fontSize="24px" 
             fontWeight="bold" 
             lineHeight="1.25" 
             padding="6px" 
@@ -58,7 +58,7 @@ const create = () =>{
             w="1080px" 
             h="204px" 
             size="lg" 
-            fontSize="16px" 
+            fontSize="24px" 
             fontWeight="bold" 
             lineHeight="1.25" 
             padding="6px" 
