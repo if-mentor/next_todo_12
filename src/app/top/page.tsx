@@ -136,6 +136,7 @@ export default function Top() {
                 <Th
                   color={"black"}
                   textTransform="capitalize"
+                  textAlign="center"
                   fontWeight="bold"
                   fontSize={24}
                 >
@@ -144,6 +145,7 @@ export default function Top() {
                 <Th
                   color={"black"}
                   textTransform="capitalize"
+                  textAlign="center"
                   fontWeight="bold"
                   fontSize={24}
                 >
@@ -152,6 +154,7 @@ export default function Top() {
                 <Th
                   color={"black"}
                   textTransform="capitalize"
+                  textAlign="center"
                   fontWeight="bold"
                   fontSize={24}
                 >
@@ -160,6 +163,7 @@ export default function Top() {
                 <Th
                   color={"black"}
                   textTransform="capitalize"
+                  textAlign="center"
                   fontWeight="bold"
                   fontSize={24}
                 >
@@ -168,6 +172,7 @@ export default function Top() {
                 <Th
                   color={"black"}
                   textTransform="capitalize"
+                  textAlign="center"
                   fontWeight="bold"
                   fontSize={24}
                 >
