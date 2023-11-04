@@ -1,0 +1,12 @@
+{
+    // タブ
+    "editor.tabSize": 2,
+    // 改行コード
+    "files.eol": "\n",
+    // ファイル保存時、最終行に改行を挿入する
+    "files.insertFinalNewline": true,
+    // ファイル保存時、最終行以降の空行を削除する
+    "files.trimFinalNewlines": true,
+    // ファイル保存時、末尾の空白をトリミングする
+    "files.trimTrailingWhitespace": true,
+}
