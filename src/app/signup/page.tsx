@@ -12,7 +12,7 @@ export default function Home() {
       </header>
 
       <main>
-        <Flex justifyContent='center' mt='80'>
+        <Flex justifyContent='center' mt='80px'>
           <Flex
             w='800px'
             h='500px'
@@ -72,6 +72,7 @@ export default function Home() {
                 rounded='50'
                 backgroundColor='#25855A'
                 color='#F0FFF4'
+                border='1px'
                 borderColor='#000000'
                 fontSize='24px'
                 fontFamily='Gothic A1'
