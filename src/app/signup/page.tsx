@@ -13,17 +13,55 @@ export default function Home() {
 
       <main>
         <Flex justifyContent='center' mt='80'>
-          <Flex w='800px' h='500px' backgroundColor='#C6F6D5' rounded='20' alignItems='center' justifyContent='space-between' direction='column' p='60px'>
-            <Flex w='500px' h='233px' alignItems='center' justifyContent='space-between' direction='column' mt='20px'>
+          <Flex
+            w='800px'
+            h='500px'
+            backgroundColor='#C6F6D5'
+            rounded='20'
+            alignItems='center'
+            justifyContent='space-between'
+            direction='column'
+            p='60px'
+          >
+            <Flex
+              w='500px'
+              h='233px'
+              alignItems='center'
+              justifyContent='space-between'
+              direction='column'
+              mt='20px'
+            >
               <FormControl w='100%'>
-                <FormLabel w='140px' h='23px' fontSize='20px' fontWeight='bold' fontFamily='Robot'>メールアドレス</FormLabel>
+                <FormLabel
+                  w='140px'
+                  h='23px'
+                  fontSize='20px'
+                  fontWeight='bold'
+                  fontFamily='Robot'>メールアドレス</FormLabel>
                 <Spacer h='4' />
-                <Input w='100%' h='60px' rounded='10' border='none' backgroundColor='#F0FFF4' />
+                <Input
+                  w='100%'
+                  h='60px'
+                  rounded='10'
+                  border='none'
+                  backgroundColor='#F0FFF4'
+                />
               </FormControl>
               <FormControl w='100%'>
-                <FormLabel w='140px' h='23px' fontSize='20px' fontWeight='bold' fontFamily='Robot'>パスワード</FormLabel>
+                <FormLabel
+                  w='140px'
+                  h='23px'
+                  fontSize='20px'
+                  fontWeight='bold'
+                  fontFamily='Robot'>パスワード</FormLabel>
                 <Spacer h='4' />
-                <Input w='100%' h='60px' rounded='10' border='none' backgroundColor='#F0FFF4' />
+                <Input
+                  w='100%'
+                  h='60px'
+                  rounded='10'
+                  border='none'
+                  backgroundColor='#F0FFF4'
+                />
               </FormControl>
             </Flex>
 
