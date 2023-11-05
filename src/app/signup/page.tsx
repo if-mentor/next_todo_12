@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <header>
-        <Flex pl='10%' alignItems='center' justifyContent='space-between' backgroundColor='#68D391'>
+        <Flex pl='10%' alignItems='center' justifyContent='space-between' bgColor='#68D391'>
           <Flex w='127px' h='56px' alignItems='center' justifyContent='center'>
             <Heading as='h1'>TODO</Heading>
           </Flex>
@@ -16,7 +16,7 @@ export default function Home() {
           <Flex
             w='800px'
             h='500px'
-            backgroundColor='#C6F6D5'
+            bgColor='#C6F6D5'
             rounded='20'
             alignItems='center'
             justifyContent='space-between'
@@ -44,7 +44,7 @@ export default function Home() {
                   h='60px'
                   rounded='10'
                   border='none'
-                  backgroundColor='#F0FFF4'
+                  bgColor='#F0FFF4'
                 />
               </FormControl>
               <FormControl w='100%'>
@@ -60,7 +60,7 @@ export default function Home() {
                   h='60px'
                   rounded='10'
                   border='none'
-                  backgroundColor='#F0FFF4'
+                  bgColor='#F0FFF4'
                 />
               </FormControl>
             </Flex>
@@ -70,7 +70,7 @@ export default function Home() {
                 w='204px'
                 h='54px'
                 rounded='50'
-                backgroundColor='#25855A'
+                bgColor='#25855A'
                 color='#F0FFF4'
                 border='1px'
                 borderColor='#000000'
