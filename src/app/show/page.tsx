@@ -38,7 +38,7 @@ export default function Home() {
                         </Flex>
                     </Box>
                     <Box className="comment-wrapper" w="49%">
-                        <ul>
+                        <ul style={{listStyle:"none"}}>
                             <li style={{marginBottom: "3%"}}>
                                 <Box border="1px solid #333" rounded="10">
                                     <Box fontWeight="bold">
