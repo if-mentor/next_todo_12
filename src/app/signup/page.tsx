@@ -4,7 +4,13 @@ export default function Home() {
   return (
     <>
       <header>
-        <Flex pl='10%' alignItems='center' justifyContent='space-between' bgColor='#68D391'>
+        <Flex
+          pl='10%'
+          alignItems='center'
+          justifyContent='space-between'
+          bgColor='#68D391'
+          style={{ boxShadow: '0 1px 2px 1px rgb(0 0 0 / 25%)' }}
+        >
           <Flex w='127px' h='56px' alignItems='center' justifyContent='center'>
             <Heading as='h1'>TODO</Heading>
           </Flex>
