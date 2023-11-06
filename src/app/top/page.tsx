@@ -47,13 +47,13 @@ export default function Top() {
       </header>
       <nav>
         <Box display="flex" justifyContent="center" my={50}>
-          <Box w="191" h="71" fontWeight="bold">
+          <Box w="191px" h="71px" fontWeight="bold">
             <p>SEARCH</p>
             <InputGroup>
               <InputRightElement
                 cursor="pointer"
                 pointerEvents="auto"
-                pt={"15px"}
+                pt="15px"
               >
                 <SearchIcon w="20px" h="20px" color="gray.400" />
               </InputRightElement>
@@ -122,11 +122,11 @@ export default function Top() {
       </nav>
       <main>
         <TableContainer display="flex" justifyContent="center">
-          <Table variant="simple" w={"1080px"} h={"392px"}>
+          <Table variant="simple" w="1080px" h="392px">
             <Thead>
-              <Tr bg="#68D391" h={"56px"}>
+              <Tr bg="#68D391" h="56px">
                 <Th
-                  color={"black"}
+                  color="black"
                   textTransform="capitalize"
                   fontWeight="bold"
                   fontSize={24}
@@ -134,7 +134,7 @@ export default function Top() {
                   Task
                 </Th>
                 <Th
-                  color={"black"}
+                  color="black"
                   textTransform="capitalize"
                   textAlign="center"
                   fontWeight="bold"
@@ -143,7 +143,7 @@ export default function Top() {
                   Status
                 </Th>
                 <Th
-                  color={"black"}
+                  color="black"
                   textTransform="capitalize"
                   textAlign="center"
                   fontWeight="bold"
@@ -152,7 +152,7 @@ export default function Top() {
                   Priority
                 </Th>
                 <Th
-                  color={"black"}
+                  color="black"
                   textTransform="capitalize"
                   textAlign="center"
                   fontWeight="bold"
@@ -161,7 +161,7 @@ export default function Top() {
                   Create
                 </Th>
                 <Th
-                  color={"black"}
+                  color="black"
                   textTransform="capitalize"
                   textAlign="center"
                   fontWeight="bold"
@@ -170,7 +170,7 @@ export default function Top() {
                   Update
                 </Th>
                 <Th
-                  color={"black"}
+                  color="black"
                   textTransform="capitalize"
                   textAlign="center"
                   fontWeight="bold"
@@ -185,11 +185,11 @@ export default function Top() {
                 <Td fontWeight="bold">
                   Github上に静的サイトをホスティングする
                 </Td>
-                <Td h={"56px"}>
+                <Td h="56px">
                   <Button
-                    fontSize={"12px"}
-                    width={"104px"}
-                    height={"40px"}
+                    fontSize="12px"
+                    w="104px"
+                    h="40px"
                     border="1px solid"
                     borderRadius="30"
                     bgColor="#C6F6D5"
@@ -198,7 +198,7 @@ export default function Top() {
                   </Button>
                 </Td>
                 <Td>
-                  <Select border="1px solid" borderColor="tomato" w={"112px"}>
+                  <Select border="1px solid" borderColor="tomato" w="112px">
                     <option value="High">High</option>
                     <option value="Middle">Middle</option>
                     <option value="LOW">LOW</option>
@@ -217,10 +217,10 @@ export default function Top() {
               </Tr>
               <Tr>
                 <Td fontWeight="bold">ReactでTodoサイトを作成する</Td>
-                <Td h={"56px"}>
+                <Td h="56px">
                   <Button
-                    width={"104px"}
-                    height={"40px"}
+                    w="104px"
+                    h="40px"
                     border="1px solid"
                     borderRadius="30"
                     bgColor="#2F855A"
@@ -233,7 +233,7 @@ export default function Top() {
                     placeholder="Low"
                     border="1px solid"
                     borderColor="tomato"
-                    w={"112px"}
+                    w="112px"
                   >
                     <option value="High">High</option>
                     <option value="Middle">Middle</option>
@@ -253,10 +253,10 @@ export default function Top() {
               </Tr>
               <Tr>
                 <Td fontWeight="bold">Firestore Hostingを学習する</Td>
-                <Td h={"56px"}>
+                <Td h="56px">
                   <Button
-                    width={"104px"}
-                    height={"40px"}
+                    w="104px"
+                    h="40px"
                     border="1px solid"
                     borderRadius="30"
                     bgColor="#68D391"
@@ -269,7 +269,7 @@ export default function Top() {
                     placeholder="Middle"
                     border="1px solid"
                     borderColor="tomato"
-                    w={"112px"}
+                    w="112px"
                   >
                     <option value="High">High</option>
                     <option value="Middle">Middle</option>
@@ -289,10 +289,10 @@ export default function Top() {
               </Tr>
               <Tr>
                 <Td fontWeight="bold">感謝の正拳突き</Td>
-                <Td h={"56px"}>
+                <Td h="56px">
                   <Button
-                    width={"104px"}
-                    height={"40px"}
+                    w="104px"
+                    h="40px"
                     border="1px solid"
                     borderRadius="30"
                     bgColor="#2F855A"
@@ -301,7 +301,7 @@ export default function Top() {
                   </Button>
                 </Td>
                 <Td>
-                  <Select border="1px solid" borderColor="tomato" w={"112px"}>
+                  <Select border="1px solid" borderColor="tomato" w="112px">
                     <option value="High">High</option>
                     <option value="Middle">Middle</option>
                     <option value="LOW">LOW</option>
@@ -320,10 +320,10 @@ export default function Top() {
               </Tr>
               <Tr>
                 <Td fontWeight="bold">二重の極み</Td>
-                <Td h={"56px"}>
+                <Td h="56px">
                   <Button
-                    width={"104px"}
-                    height={"40px"}
+                    w="104px"
+                    h="40px"
                     border="1px solid"
                     borderRadius="30"
                     bgColor="#68D391"
@@ -332,7 +332,7 @@ export default function Top() {
                   </Button>
                 </Td>
                 <Td>
-                  <Select border="1px solid" borderColor="tomato" w={"112px"}>
+                  <Select border="1px solid" borderColor="tomato" w="112px">
                     <option value="High">High</option>
                     <option value="Middle">Middle</option>
                     <option value="LOW">LOW</option>
@@ -351,9 +351,9 @@ export default function Top() {
               </Tr>
               <Tr>
                 <Td fontWeight="bold">魔封波</Td>
-                <Td h={"56px"}>
+                <Td h="56px">
                   <Button
-                    width={"104px"}
+                    w="104px"
                     border="1px solid"
                     borderRadius="30"
                     bgColor="#2F855A"
@@ -366,7 +366,7 @@ export default function Top() {
                     placeholder="Low"
                     border="1px solid"
                     borderColor="tomato"
-                    w={"112px"}
+                    w="112px"
                   >
                     <option value="High">High</option>
                     <option value="Middle">Middle</option>
