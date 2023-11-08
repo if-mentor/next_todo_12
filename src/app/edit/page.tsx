@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Radio, RadioGroup, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 
-const create = () =>{
+const edit = () =>{
   return (
       <Box as="main" w="1280px" mx="auto">
         <Flex
@@ -106,4 +106,4 @@ const create = () =>{
   );
 };
 
-export default create;
+export default edit;
