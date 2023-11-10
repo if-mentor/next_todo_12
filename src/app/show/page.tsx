@@ -1,5 +1,5 @@
 import {Button, Box, Flex, Icon, FormLabel, Input, Textarea } from "@chakra-ui/react";
-// import { EditIcon } from "@chakra-ui/icons";
+import { EditIcon } from '@chakra-ui/icons';
 
 export default function Home() {
     return (
@@ -31,8 +31,7 @@ export default function Home() {
                             <p>AWS コンソールで AWS Amplify を使って静的ウェブサイトをホスティングします。AWS Amplify は、静的ウェブサイトおよびウェブアプリにフルマネージドのホスティングを提供します。Amplify のホスティングソリューションは、Amazon CloudFront と Amazon S3 を使って、AWS コンテンツ配信ネットワーク (CDN) を介してサイトアセットを提供します。<br />継続的デプロイをセットアップします。Amplify は、継続的デプロイで Git ベースのワークフローを提供します。それにより、コードコミットごとに、サイトに自動的に更新をデプロイすることができます。</p>
                         </Box>
                         <Flex justifyContent="space-between" fontWeight="bold">
-                            {/* <Button color="#333" bg="#68D391" border="1px solid #333" rounded="full" fontSize="18px"><Flex gap="3%"><EditIcon /><p>Edit</p></Flex></Button> */}
-                            <Button color="#333" bg="#68D391" border="1px solid #333" rounded="full" fontSize="18px"><Flex gap="3%"><p>Edit</p></Flex></Button>
+                            <Button color="#333" bg="#68D391" border="1px solid #333" rounded="full" fontSize="18px"><Flex gap="3%"><EditIcon /><p>Edit</p></Flex></Button>
                             <p>Create<br />2023-01-01 00:00</p>
                             <p>Update<br />2023-01-01 00:00</p>
                         </Flex>
