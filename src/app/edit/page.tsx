@@ -43,7 +43,7 @@ const edit = () =>{
               cursor="pointer"
               fontWeight="bold"
               fontSize="18px">
-              BACK
+              Back
             </Button>
           </Box>
         </Flex>
@@ -83,7 +83,7 @@ const edit = () =>{
               <Text fontWeight="bold">2023-01-01 00:00</Text>
             </Box>
             <Box>
-              <Text fontWeight="bold">Create</Text>
+              <Text fontWeight="bold">Update</Text>
               <Text fontWeight="bold">2023-01-01 00:00</Text>
             </Box>
           </Flex>
