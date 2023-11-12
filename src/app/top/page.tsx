@@ -14,6 +14,7 @@ import {
   Th,
   Td,
   TableContainer,
+  Text,
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
@@ -33,7 +34,7 @@ type task = {
 
 async function getTaskList() {
   const querySnapshot = await getDocs(collection(db, 'todo_bb'))
-  const result:task[] = []
+  const result: task[] = []
   querySnapshot.forEach((doc) => {
     const task = doc.data()
     const created_at = new Date(task.created_at.seconds * 1000)
@@ -86,7 +87,7 @@ export default function Top() {
         >
           TODO
           <Button
-            color="D9D9D9"
+            color="#black"
             fontWeight="bold"
             w="120px"
             h="56px"
@@ -98,8 +99,8 @@ export default function Top() {
       </header>
       <nav>
         <Box display="flex" justifyContent="center" my={50}>
-          <Box w="191px" h="71px" fontWeight="bold">
-            <p>SEARCH</p>
+          <Box w="190px" h="71px" fontWeight="bold">
+            <Text>SEARCH</Text>
             <InputGroup>
               <InputRightElement
                 cursor="pointer"
@@ -120,11 +121,11 @@ export default function Top() {
               />
             </InputGroup>
           </Box>
-          <Box w="191" h="71" pl={5} fontWeight="bold">
-            <p>STATUS</p>
+          <Box w="192px" h="71px" fontWeight="bold" pl={5}>
+            <Text>STATUS</Text>
             <Select
               placeholder="- - - - - - -"
-              w={192}
+              w="192px"
               my={2}
               fontWeight="bold"
               border="1px solid"
@@ -134,11 +135,11 @@ export default function Top() {
               <option value="DONE">DONE</option>
             </Select>
           </Box>
-          <Box w="191" h="71" pl={5} fontWeight="bold">
-            <p>PRIORITY</p>
+          <Box w="197px" h="71px" fontWeight="bold" pl={10}>
+            <Text>PRIORITY</Text>
             <Select
               placeholder="- - - - - - -"
-              w={192}
+              w="192px"
               my={2}
               fontWeight="bold"
               border="1px solid"
@@ -148,13 +149,13 @@ export default function Top() {
               <option value="LOW">LOW</option>
             </Select>
           </Box>
-          <Box pl={5} pt="32px">
+          <Box pl={20} pt="32px">
             <Button
-              w={104}
+              w="104px"
               fontWeight="bold"
-              borderRadius="30"
+              borderRadius="30px"
               bgColor="#A0AEC0"
-              fontSize={18}
+              fontSize="18px"
               border="1px solid"
             >
               RESET
