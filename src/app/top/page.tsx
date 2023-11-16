@@ -44,8 +44,8 @@ async function getTaskList() {
       name: task.name,
       priority: task.priority,
       status: task.status,
-      created_at: created_at.getFullYear() + '-' + (1 + created_at.getMonth()) + '-' + created_at.getDate() + ' ' + created_at.getHours() + ':' + created_at.getMinutes(),
-      updated_at: updated_at.getFullYear() + '-' + (1 + updated_at.getMonth()) + '-' + updated_at.getDate() + ' ' + updated_at.getHours() + ':' + updated_at.getMinutes(),
+      created_at: created_at.getFullYear() + '-' + (1 + created_at.getMonth()).toString().padStart(2, '0') + '-' + created_at.getDate().toString().padStart(2, '0') + ' ' + created_at.getHours().toString().padStart(2, '0') + ':' + created_at.getMinutes().toString().padStart(2, '0'),
+      updated_at: updated_at.getFullYear() + '-' + (1 + updated_at.getMonth()).toString().padStart(2, '0') + '-' + updated_at.getDate().toString().padStart(2, '0') + ' ' + updated_at.getHours().toString().padStart(2, '0') + ':' + updated_at.getMinutes().toString().padStart(2, '0'),
     })
   })
   return result
