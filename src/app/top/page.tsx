@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, onSnapshot, } from 'firebase/firestore'
 import { db } from '@/libs/firebase'
 import { useEffect, useState } from "react"
 import NextLink from 'next/link'
@@ -32,41 +32,28 @@ type task = {
   updated_at: string,
 }
 
-async function getTaskList() {
-  const querySnapshot = await getDocs(collection(db, 'todo_bb'))
-  const result: task[] = []
-  querySnapshot.forEach((doc) => {
-    const task = doc.data()
-    const created_at = new Date(task.created_at.seconds * 1000)
-    const updated_at = new Date(task.updated_at.seconds * 1000)
-    result.push({
-      id: task.id,
-      name: task.name,
-      priority: task.priority,
-      status: task.status,
-      created_at: created_at.getFullYear() + '-' + (1 + created_at.getMonth()).toString().padStart(2, '0') + '-' + created_at.getDate().toString().padStart(2, '0') + ' ' + created_at.getHours().toString().padStart(2, '0') + ':' + created_at.getMinutes().toString().padStart(2, '0'),
-      updated_at: updated_at.getFullYear() + '-' + (1 + updated_at.getMonth()).toString().padStart(2, '0') + '-' + updated_at.getDate().toString().padStart(2, '0') + ' ' + updated_at.getHours().toString().padStart(2, '0') + ':' + updated_at.getMinutes().toString().padStart(2, '0'),
-    })
-  })
-  return result
-}
-
 export default function Top() {
   const [task_list, setTaskList] = useState<task[]>([])
+
   useEffect(() => {
-    getTaskList().then((result) => {
-      result.map((task) => {
-        setTaskList((prev_task) => {
-          return [...prev_task, {
-            id: task.id,
-            name: task.name,
-            priority: task.priority,
-            status: task.status,
-            created_at: task.created_at,
-            updated_at: task.updated_at,
-          }]
+    const q = collection(db, 'todo_bb')
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const result: task[] = []
+      querySnapshot.docs.forEach((doc) => {
+        const task = doc.data()
+        const created_at = new Date(task.created_at.seconds * 1000)
+        const updated_at = new Date(task.updated_at.seconds * 1000)
+        result.push({
+          id: task.id,
+          name: task.name,
+          priority: task.priority,
+          status: task.status,
+          created_at: created_at.getFullYear() + '-' + (1 + created_at.getMonth()).toString().padStart(2, '0') + '-' + created_at.getDate().toString().padStart(2, '0') + ' ' + created_at.getHours().toString().padStart(2, '0') + ':' + created_at.getMinutes().toString().padStart(2, '0'),
+          updated_at: updated_at.getFullYear() + '-' + (1 + updated_at.getMonth()).toString().padStart(2, '0') + '-' + updated_at.getDate().toString().padStart(2, '0') + ' ' + updated_at.getHours().toString().padStart(2, '0') + ':' + updated_at.getMinutes().toString().padStart(2, '0'),
         })
       })
+
+      setTaskList(result)
     })
   }, [])
 
