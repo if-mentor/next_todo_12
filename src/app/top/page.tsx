@@ -14,6 +14,7 @@ import {
   Th,
   Td,
   TableContainer,
+  Text,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
@@ -35,7 +36,7 @@ export default function Top() {
         >
           TODO
           <Button
-            color="D9D9D9"
+            color="#black"
             fontWeight="bold"
             w="120px"
             h="56px"
@@ -47,8 +48,8 @@ export default function Top() {
       </header>
       <nav>
         <Box display="flex" justifyContent="center" my={50}>
-          <Box w="191px" h="71px" fontWeight="bold">
-            <p>SEARCH</p>
+          <Box w="190px" h="71px" fontWeight="bold">
+            <Text>SEARCH</Text>
             <InputGroup>
               <InputRightElement
                 cursor="pointer"
@@ -69,11 +70,11 @@ export default function Top() {
               />
             </InputGroup>
           </Box>
-          <Box w="191" h="71" pl={5} fontWeight="bold">
-            <p>STATUS</p>
+          <Box w="192px" h="71px" fontWeight="bold" pl={5}>
+            <Text>STATUS</Text>
             <Select
               placeholder="- - - - - - -"
-              w={192}
+              w="192px"
               my={2}
               fontWeight="bold"
               border="1px solid"
@@ -83,11 +84,11 @@ export default function Top() {
               <option value="DONE">DONE</option>
             </Select>
           </Box>
-          <Box w="191" h="71" pl={5} fontWeight="bold">
-            <p>PRIORITY</p>
+          <Box w="197px" h="71px" fontWeight="bold" pl={10}>
+            <Text>PRIORITY</Text>
             <Select
               placeholder="- - - - - - -"
-              w={192}
+              w="192px"
               my={2}
               fontWeight="bold"
               border="1px solid"
@@ -97,13 +98,13 @@ export default function Top() {
               <option value="LOW">LOW</option>
             </Select>
           </Box>
-          <Box pl={5} pt="32px">
+          <Box pl={20} pt="32px">
             <Button
-              w={104}
+              w="104px"
               fontWeight="bold"
-              borderRadius="30"
+              borderRadius="30px"
               bgColor="#A0AEC0"
-              fontSize={18}
+              fontSize="18px"
               border="1px solid"
             >
               RESET
@@ -113,7 +114,7 @@ export default function Top() {
             <IconButton
               aria-label="Search database"
               icon={<EditIcon />}
-              borderRadius="30"
+              borderRadius="30px"
               bgColor="#68D391"
               ml={400}
             />
@@ -191,7 +192,7 @@ export default function Top() {
                     w="104px"
                     h="40px"
                     border="1px solid"
-                    borderRadius="30"
+                    borderRadius="30px"
                     bgColor="#C6F6D5"
                   >
                     NOT STARTED
@@ -205,10 +206,10 @@ export default function Top() {
                   </Select>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td>
                   <EditIcon w="50px" />
@@ -222,7 +223,7 @@ export default function Top() {
                     w="104px"
                     h="40px"
                     border="1px solid"
-                    borderRadius="30"
+                    borderRadius="30px"
                     bgColor="#2F855A"
                   >
                     DOING
@@ -241,10 +242,10 @@ export default function Top() {
                   </Select>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td>
                   <EditIcon w="50px" />
@@ -258,7 +259,7 @@ export default function Top() {
                     w="104px"
                     h="40px"
                     border="1px solid"
-                    borderRadius="30"
+                    borderRadius="30px"
                     bgColor="#68D391"
                   >
                     DONE
@@ -277,10 +278,10 @@ export default function Top() {
                   </Select>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td>
                   <EditIcon w="50px" />
@@ -294,7 +295,7 @@ export default function Top() {
                     w="104px"
                     h="40px"
                     border="1px solid"
-                    borderRadius="30"
+                    borderRadius="30px"
                     bgColor="#2F855A"
                   >
                     DOING
@@ -308,10 +309,10 @@ export default function Top() {
                   </Select>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td>
                   <EditIcon w="50px" />
@@ -325,7 +326,7 @@ export default function Top() {
                     w="104px"
                     h="40px"
                     border="1px solid"
-                    borderRadius="30"
+                    borderRadius="30px"
                     bgColor="#68D391"
                   >
                     DONE
@@ -339,10 +340,10 @@ export default function Top() {
                   </Select>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td>
                   <EditIcon w="50px" />
@@ -355,7 +356,7 @@ export default function Top() {
                   <Button
                     w="104px"
                     border="1px solid"
-                    borderRadius="30"
+                    borderRadius="30px"
                     bgColor="#2F855A"
                   >
                     DOING
@@ -374,10 +375,10 @@ export default function Top() {
                   </Select>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td fontWeight="bold">
-                  <p>2020-11-8 18:55</p>
+                  <Text>2020-11-8 18:55</Text>
                 </Td>
                 <Td>
                   <EditIcon w="50px" />
