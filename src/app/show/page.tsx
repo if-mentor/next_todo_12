@@ -1,3 +1,4 @@
+"use client";
 import {Button, Box, Flex, FormLabel, Input, Textarea } from "@chakra-ui/react";
 import { EditIcon } from '@chakra-ui/icons';
 
