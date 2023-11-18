@@ -17,33 +17,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { db } from "@/libs/firebase";
-import { Timestamp, collection, getDocs } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import { type } from "os";
-
-type TodoType = {
-  id: string;
-  title: string;
-  text: string;
-  status: string;
-  priority: string;
-  create: Timestamp;
-  update: Timestamp;
-};
 
 export default function Top() {
-  // データベースから取得したデータを入れる
-  const [posts, setPosts] = useState<TodoType[]>([]);
-
-  // ブラウザがリロードされた時に1回だけ実行される
-  useEffect(() => {
-    // データベースからデータを取得する
-    const postData = collection(db, "todoposts");
-    getDocs(postData).then((querySnapshot) => {
-      setPosts(querySnapshot.docs.map((doc) => doc.data() as TodoType));
-    });
-  }, []);
   return (
     <>
       <header>
