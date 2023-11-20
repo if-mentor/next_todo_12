@@ -1,8 +1,70 @@
 "use client";
-import {Button, Box, Flex, FormLabel, Input, Textarea } from "@chakra-ui/react";
+import {
+    Button,
+    Box,
+    Flex,
+    FormLabel,
+    Input,
+    Textarea
+    } from "@chakra-ui/react";
 import { EditIcon } from '@chakra-ui/icons';
+// firebaseとの連携の際に、db変数を取り込むため
+import { db } from "@/libs/firebase";
+// firebaseのcloud firestoreを使用し、データベースにアクセスするためのモジュールや関数をインポート
+import { Timestamp, collection, getDocs } from "firebase/firestore";
+import { useState, useEffect } from "react";
 
-export default function Home() {
+type ShowType = {
+    test_detail: string;
+    test_title: string;
+}
+
+
+export default function Show() {
+    // データベースから取得したデータを格納する
+    const [data, setData] = useState<ShowType[]>([]);
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const querySnapshot = await getDocs(collection(db, "todo_show_test"));
+    //             const newData: ShowType[] = [];
+
+    //             querySnapshot.forEach((doc) => {
+    //                 // test01_todoドキュメントにアクセス
+    //                 const todoDoc = doc.data();
+
+    //                 // デストラクチャリングする前に必要なフィールドが存在するか確認
+    //                 if (todoDoc && todoDoc.test01_todo) {
+    //                     const { test_detail, test_title } = todoDoc.test01_todo;
+
+    //                     newData.push({
+    //                         test_detail: test_detail || "", // デフォルト値を提供するか、undefinedの場合の処理を追加
+    //                         test_title: test_title || "",
+    //                     });
+    //                 }
+    //             })
+
+    //             setData(newData);
+    //         } catch (error) {
+    //             console.error("error fetching data:", error);
+    //         }
+    //     }
+    //     fetchData();
+    // }, []);
+
+    useEffect(() => {
+        const postData = collection(db, "todo_show_test");
+        getDocs(postData).then((querySnapshot) => {
+          const postsData = querySnapshot.docs.map((doc) => ({
+            ...doc.data(), // ドキュメントデータを展開
+          }) as ShowType);
+          setData(postsData);
+        });
+      }, []);
+
+    console.log(data);
+
     return (
         <Box position="relative">
             <header>
@@ -144,8 +206,8 @@ export default function Home() {
                 </Flex>
             </main>
 
-            {/* モーダルについて */}
-            <Box
+            {/* モーダルについて　一旦非表示にします。 */}
+            {/* <Box
             w="100vw"
             h="100vh"
             bg="#000"
@@ -182,7 +244,7 @@ export default function Home() {
                 w="100%">
                     CREATE
                 </Button>
-            </Box>
+            </Box> */}
         </Box>
     )
 }
