@@ -13,26 +13,33 @@ import {
 import React, { useState } from "react";
 import { db } from "@/libs/firebase";
 import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 const create = () => {
-  const [createTodotitle, setCreateTodoTitle] = useState("");
-  const [createTodoText, setCreateTodoText] = useState("");
+  const router = useRouter();
+  const [todoTitle, setTodoTitle] = useState("");
+  const [todoText, setTodoText] = useState("");
+  const [selectPriority, setSelectPriority] = useState("High");
   // createボタンが押されたら
   const handleClickCreate = () => {
+    if (todoText === "" || todoText === "") return;
     // 新しいランダムなドキュメントを作る
     // 押すたびにidが発行される
     const docRef = doc(collection(db, "todoprops"));
-
     // Firebaseのデータベースにデータを追加する
     setDoc(doc(db, "todoposts", docRef.id), {
       id: docRef.id,
-      title: "title",
-      text: "text",
-      priority: "priority",
-      status: "status",
+      title: todoTitle,
+      text: todoText,
+      priority: selectPriority,
+      status: "NOT STARTED",
       create_at: Timestamp.now(),
-      updeta_at: Timestamp.now(),
+      update_at: Timestamp.now(),
     });
+    setTodoTitle("");
+    setTodoText("");
+    setSelectPriority("");
+    router.push("/top");
   };
 
   return (
@@ -87,8 +94,9 @@ const create = () => {
           TITLE
         </Text>
         <Textarea
-          onChange={() => {
-            setCreateTodoTitle;
+          value={todoTitle}
+          onChange={(e) => {
+            setTodoTitle(e.target.value);
           }}
           w="1080px"
           h="72px"
@@ -107,6 +115,8 @@ const create = () => {
           DETAIL
         </Text>
         <Textarea
+          value={todoText}
+          onChange={(e) => setTodoText(e.target.value)}
           w="1080px"
           h="204px"
           size="lg"
@@ -123,7 +133,10 @@ const create = () => {
         <Text fontSize="24px" fontWeight="bold">
           PRIORITY
         </Text>
-        <RadioGroup defaultValue="High">
+        <RadioGroup
+          onChange={(e) => setSelectPriority(e)}
+          value={selectPriority}
+        >
           <Stack direction="row">
             <Radio value="High" fontWeight="bold" fontSize="24px" mr={4}>
               High
