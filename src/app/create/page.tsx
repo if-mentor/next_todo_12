@@ -1,25 +1,18 @@
 "use client";
-import { Box, Button, Flex, Radio, RadioGroup, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Radio,
+  RadioGroup,
+  Spacer,
+  Stack,
+  Text,
+  Textarea,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
-import { db } from "@/libs/firebase";
-import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
 
 const create = () => {
-  const [createTodotitle, setCreateTodoTitle] = useState<string>("");
-  const [createTodoText, setCreateTodoText] = useState<string>("");
-  const [priority, setPriority] = useState<string>("Low"); // 例として追加された優先度の状態
-
-  const handleClickCreate = () => {
-    const docRef = doc(collection(db, "todoprops"));
-
-    setDoc(docRef, {
-      id: docRef.id,
-      title: createTodotitle,
-      text: createTodoText,
-      priority: priority, // 動的な優先度の値を使用
-    });
-  };
-  
   return (
     <Box as="main" w="1280px" mx="auto">
       <Flex as="header" h="80px" bg="#68D391" alignItems="center" px={5}>
@@ -72,9 +65,6 @@ const create = () => {
           TITLE
         </Text>
         <Textarea
-          onChange={() => {
-            setCreateTodoTitle;
-          }}
           w="1080px"
           h="72px"
           size="lg"
@@ -125,7 +115,6 @@ const create = () => {
       <Flex mt={4} ml="100px">
         <Box ml="968px">
           <Button
-            onClick={() => handleClickCreate()}
             w="112px"
             h="40px"
             bg="#25855A"
