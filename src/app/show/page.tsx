@@ -11,30 +11,87 @@ import { EditIcon } from '@chakra-ui/icons';
 // firebaseとの連携の際に、db変数を取り込むため
 import { db } from "@/libs/firebase";
 // firebaseのcloud firestoreを使用し、データベースにアクセスするためのモジュールや関数をインポート
-import { Timestamp, collection, getDocs } from "firebase/firestore";
+import { Timestamp, collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-type ShowType = {
-    test_detail: string;
-    test_title: string;
+type CommentType = {
+    id: number;
+    name: string;
+    comment: string;
+    date: string;
 }
 
-
 export default function Show() {
-    // データベースから取得したデータを格納する
-    const [data, setData] = useState<ShowType[]>([]);
+    // ルーター設定
+    const router = useRouter();
 
-    useEffect(() => {
-        const postData = collection(db, "todo_show_test");
-        getDocs(postData).then((querySnapshot) => {
-          const postsData = querySnapshot.docs.map((doc) => ({
-            ...doc.data(), // ドキュメントデータを展開
-          }) as ShowType);
-          setData(postsData);
+    // デフォルトではモーダルを閉じておく
+    // モーダルの状態管理
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const toggleModal = () => {
+        setIsModalVisible(!isModalVisible);
+    }
+
+    // TOPページに戻るBackボタンの処理
+    const handleTransitionTop = () => {
+        router.push("/top");
+    }
+
+    // Editページへ飛ぶEditボタンの処理
+    const handleTransitionEdit = () => {
+        router.push("/edit");
+    }
+
+    // モーダルにおけるNameとYour Commentの状態管理
+    const [commentName, setCommentName] = useState("");
+    const [commentComment, setCommentComment] = useState("");
+
+    // モーダルにおけるCreateボタン押下処理
+    const handleClickComment = () => {
+        // コメントに入力されていなければ、この時点で返す
+        if(commentName === "" || commentComment === "") return;
+
+        // 投稿日
+        const currentDate = new Date();
+        // 年、月、日の取得
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+
+        const commentDate = `${year}/${month}/${day}`;
+
+        // Firebaseコレクションとドキュメントの作成
+        const docRef = doc(collection(db, "comment_props"));
+        setDoc(doc(db, "todo_show_comment", docRef.id), {
+            id: docRef.id,
+            name: commentName,
+            comment: commentComment,
+            date: commentDate,
         });
-      }, []);
+        setCommentName("");
+        setCommentComment("");
 
-    console.log(data);
+        // モーダルの非表示化
+        toggleModal();
+    }
+
+    // firebaseに保存したデータを取得する
+    // 取得データ格納用
+    const [data, setData] = useState<CommentType[]>([]);
+
+    // コレクションの参照を取得する
+    useEffect(() => {
+        // 取得に時間がかかるため、非同期を使用
+        const fetchData = async () => {
+            const postData = collection(db, 'todo_show_comment');
+            const querySnapshot = await getDocs(postData);
+            const postsData = querySnapshot.docs.map((doc) => doc.data() as CommentType);
+            setData(postsData);
+        };
+
+        fetchData();
+    }, [handleClickComment]);
 
     return (
         <Box position="relative">
@@ -63,6 +120,7 @@ export default function Show() {
                 justifyContent="flex-end"
                 gap="1%">
                     <Button
+                    onClick={() => toggleModal()}
                     color="#fff"
                     bg="#25855A"
                     border="1px solid #333"
@@ -71,6 +129,7 @@ export default function Show() {
                         Comment
                     </Button>
                     <Button
+                    onClick={() => handleTransitionTop()}
                     color="#333"
                     bg="#68D391"
                     border="1px solid #333"
@@ -83,7 +142,7 @@ export default function Show() {
                 w="80%"
                 m="1% auto"
                 gap="2%"
-                alignItems="end">
+                alignItems="start">
                     <Box className="todo-wrapper"
                     p="1%"
                     w="49%"
@@ -99,6 +158,7 @@ export default function Show() {
                         </Box>
                         <Flex justifyContent="space-between" fontWeight="bold">
                             <Button
+                            onClick={() => handleTransitionEdit()}
                             color="#333"
                             bg="#68D391"
                             border="1px solid #333"
@@ -112,110 +172,71 @@ export default function Show() {
                     </Box>
                     <Box className="comment-wrapper" w="49%">
                         <ul style={{listStyle:"none"}}>
-                            <li style={{marginBottom: "3%"}}>
-                                <Box border="1px solid #333" rounded="10">
-                                    <Box fontWeight="bold">
-                                        <Box bg="#25855A" borderRadius="8px 8px 0 0" borderBottom="1px solid #333">
-                                            <Flex width="90%" m="0 auto" justifyContent="space-between" color="#fff">
-                                                <p>ジョン</p>
-                                                <p>2022/01/01</p>
-                                            </Flex>
-                                        </Box>
-                                        <Box p="2%">
-                                            <p>2日後までに完了お願い致します。</p>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </li>
-                            <li style={{marginBottom: "3%"}}>
-                                <Box border="1px solid #333" rounded="10">
-                                    <Box fontWeight="bold">
-                                        <Box bg="#25855A" borderRadius="8px 8px 0 0" borderBottom="1px solid #333">
-                                            <Flex width="90%" m="0 auto" justifyContent="space-between" color="#fff">
-                                                <p>リンゴ</p>
-                                                <p>2022/01/01</p>
-                                            </Flex>
-                                        </Box>
-                                        <Box p="2%">
-                                            <p>内容確認致しました。修正点メールしましたのでご確認ください。</p>
+                            {data.map((item, index) => (
+                                <li key={index} style={{marginBottom: "3%"}}>
+                                    <Box border="1px solid #333" rounded="10">
+                                        <Box fontWeight="bold">
+                                            <Box bg="#25855A" borderRadius="8px 8px 0 0" borderBottom="1px solid #333">
+                                                <Flex width="90%" m="0 auto" justifyContent="space-between" color="#fff">
+                                                    <p>{item.name}</p>
+                                                    <p>{item.date}</p>
+                                                </Flex>
+                                            </Box>
+                                            <Box p="2%">
+                                                <p>{item.comment}</p>
+                                            </Box>
                                         </Box>
                                     </Box>
-                                </Box>
-                            </li>
-                            <li style={{marginBottom: "3%"}}>
-                                <Box border="1px solid #333" rounded="10">
-                                    <Box fontWeight="bold">
-                                        <Box bg="#25855A" borderRadius="8px 8px 0 0" borderBottom="1px solid #333">
-                                            <Flex width="90%" m="0 auto" justifyContent="space-between" color="#fff">
-                                                <p>ポール</p>
-                                                <p>2022/01/01</p>
-                                            </Flex>
-                                        </Box>
-                                        <Box p="2%">
-                                            <p>2日後までに完了お願い致します。</p>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </li>
-                            <li>
-                                <Box border="1px solid #333" rounded="10">
-                                    <Box fontWeight="bold">
-                                        <Box bg="#25855A" borderRadius="8px 8px 0 0" borderBottom="1px solid #333">
-                                            <Flex width="90%" m="0 auto" justifyContent="space-between" color="#fff">
-                                                <p>ジョージ</p>
-                                                <p>2022/01/01</p>
-                                            </Flex>
-                                        </Box>
-                                        <Box p="2%">
-                                            <p>2日後までに完了お願い致します。</p>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </li>
+                                </li>
+                            ))}
                         </ul>
                     </Box>
                 </Flex>
             </main>
 
-            {/* モーダルについて　一旦非表示にします。 */}
-            {/* <Box
-            w="100vw"
-            h="100vh"
-            bg="#000"
-            opacity=".3"
-            position="absolute"
-            top="0"
-            left="0">
-            </Box>
-            <Box
-            zIndex="100"
-            position="absolute"
-            top="50%"
-            left="50%"
-            transform="translate(-50%, -50%)"
-            bg="#fff"
-            p="1%"
-            border="1px solid #333"
-            rounded="10px">
-                <Box fontSize="2rem" fontWeight="bold">Comment</Box>
-                <FormLabel w="100%">
-                    Name
-                    <Input />
-                </FormLabel>
-                <FormLabel w="100%">
-                    Your Comment
-                    <Textarea />
-                </FormLabel>
-                <Button
-                color="#fff"
-                bg="#25855A"
+            {/* モーダルについて */}
+            <Box className="modalWrapper" style={{display: isModalVisible ? 'block' : 'none'}}>
+                <Box
+                onClick={() => toggleModal()}
+                w="100vw"
+                h="100vh"
+                bg="#000"
+                opacity=".3"
+                position="absolute"
+                top="0"
+                left="0">
+                </Box>
+                <Box
+                zIndex="100"
+                position="absolute"
+                top="50%"
+                left="50%"
+                transform="translate(-50%, -50%)"
+                bg="#fff"
+                p="1%"
                 border="1px solid #333"
-                rounded="10px"
-                fontSize="18px"
-                w="100%">
-                    CREATE
-                </Button>
-            </Box> */}
+                rounded="10px">
+                    <Box fontSize="2rem" fontWeight="bold">Comment</Box>
+                    <FormLabel w="100%">
+                        Name
+                        <Input value={commentName} onChange={(e) => setCommentName(e.target.value)}/>
+                    </FormLabel>
+                    <FormLabel w="100%">
+                        Your Comment
+                        <Textarea value={commentComment} onChange={(e) => setCommentComment(e.target.value)} />
+                    </FormLabel>
+                    <Button
+                    onClick={() => handleClickComment()}
+                    color="#fff"
+                    bg="#25855A"
+                    border="1px solid #333"
+                    rounded="10px"
+                    fontSize="18px"
+                    w="100%">
+                        CREATE
+                    </Button>
+                </Box>
+            </Box>
         </Box>
     )
 }
