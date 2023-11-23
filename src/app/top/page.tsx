@@ -33,7 +33,7 @@ type task = {
 }
 
 export default function Top() {
-  const [task_list, setTaskList] = useState<task[]>([])
+  const [taskList, setTaskList] = useState<task[]>([])
 
   useEffect(() => {
     const q = collection(db, 'todo_bb')
@@ -41,15 +41,15 @@ export default function Top() {
       const result: task[] = []
       querySnapshot.docs.forEach((doc) => {
         const task = doc.data()
-        const created_at = new Date(task.created_at.seconds * 1000)
-        const updated_at = new Date(task.updated_at.seconds * 1000)
+        const createdAt = new Date(task.created_at.seconds * 1000)
+        const updatedAt = new Date(task.updated_at.seconds * 1000)
         result.push({
           id: doc.id,
           name: task.name,
           priority: task.priority,
           status: task.status,
-          created_at: created_at.getFullYear() + '-' + (1 + created_at.getMonth()).toString().padStart(2, '0') + '-' + created_at.getDate().toString().padStart(2, '0') + ' ' + created_at.getHours().toString().padStart(2, '0') + ':' + created_at.getMinutes().toString().padStart(2, '0'),
-          updated_at: updated_at.getFullYear() + '-' + (1 + updated_at.getMonth()).toString().padStart(2, '0') + '-' + updated_at.getDate().toString().padStart(2, '0') + ' ' + updated_at.getHours().toString().padStart(2, '0') + ':' + updated_at.getMinutes().toString().padStart(2, '0'),
+          created_at: createdAt.getFullYear() + '-' + (1 + createdAt.getMonth()).toString().padStart(2, '0') + '-' + createdAt.getDate().toString().padStart(2, '0') + ' ' + createdAt.getHours().toString().padStart(2, '0') + ':' + createdAt.getMinutes().toString().padStart(2, '0'),
+          updated_at: updatedAt.getFullYear() + '-' + (1 + updatedAt.getMonth()).toString().padStart(2, '0') + '-' + updatedAt.getDate().toString().padStart(2, '0') + ' ' + updatedAt.getHours().toString().padStart(2, '0') + ':' + updatedAt.getMinutes().toString().padStart(2, '0'),
         })
       })
 
@@ -222,7 +222,7 @@ export default function Top() {
               </Tr>
             </Thead>
             <Tbody>
-              {task_list.map((task) => (
+              {taskList.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
                     {task.name}
