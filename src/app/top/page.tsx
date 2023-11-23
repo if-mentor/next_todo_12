@@ -23,7 +23,7 @@ import { db } from '@/libs/firebase'
 import { useEffect, useState } from "react"
 import NextLink from 'next/link'
 
-type task = {
+type Task = {
   id: string,
   name: string,
   priority: number,
@@ -33,12 +33,12 @@ type task = {
 }
 
 export default function Top() {
-  const [taskList, setTaskList] = useState<task[]>([])
+  const [taskList, setTaskList] = useState<Task[]>([])
 
   useEffect(() => {
     const q = collection(db, 'todo_bb')
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const result: task[] = []
+      const result: Task[] = []
       querySnapshot.docs.forEach((doc) => {
         const task = doc.data()
         const createdAt = new Date(task.created_at.seconds * 1000)
