@@ -24,7 +24,7 @@ import { useEffect, useState } from "react"
 import NextLink from 'next/link'
 
 type task = {
-  id: number,
+  id: string,
   name: string,
   priority: number,
   status: number,
@@ -44,7 +44,7 @@ export default function Top() {
         const created_at = new Date(task.created_at.seconds * 1000)
         const updated_at = new Date(task.updated_at.seconds * 1000)
         result.push({
-          id: task.id,
+          id: doc.id,
           name: task.name,
           priority: task.priority,
           status: task.status,
