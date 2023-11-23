@@ -32,6 +32,10 @@ type Task = {
   updated_at: string,
 }
 
+const formatDate = (date: Date): string => {
+  return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
+}
+
 export default function Top() {
   const [taskList, setTaskList] = useState<Task[]>([])
 
@@ -48,8 +52,8 @@ export default function Top() {
           name: task.name,
           priority: task.priority,
           status: task.status,
-          created_at: createdAt.getFullYear() + '-' + (1 + createdAt.getMonth()).toString().padStart(2, '0') + '-' + createdAt.getDate().toString().padStart(2, '0') + ' ' + createdAt.getHours().toString().padStart(2, '0') + ':' + createdAt.getMinutes().toString().padStart(2, '0'),
-          updated_at: updatedAt.getFullYear() + '-' + (1 + updatedAt.getMonth()).toString().padStart(2, '0') + '-' + updatedAt.getDate().toString().padStart(2, '0') + ' ' + updatedAt.getHours().toString().padStart(2, '0') + ':' + updatedAt.getMinutes().toString().padStart(2, '0'),
+          created_at: formatDate(createdAt),
+          updated_at: formatDate(updatedAt),
         })
       })
 
