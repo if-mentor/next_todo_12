@@ -25,45 +25,14 @@ export default function Show() {
     const [data, setData] = useState<ShowType[]>([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // todo_show_testからドキュメント一覧を取得
-                const querySnapshot = await getDocs(collection(db, "todo_show_test"));
-                // 取得したドキュメントを格納する
-                const newData: ShowType[] = [];
-
-                querySnapshot.forEach((doc) => {
-                    // test01_todoドキュメントにアクセス
-                    const todoDoc = doc.data();
-
-                    // デストラクチャリングする前に必要なフィールドが存在するか確認
-                    if (todoDoc && todoDoc.test01_todo) {
-                        const { test_detail, test_title } = todoDoc.test01_todo;
-
-                        newData.push({
-                            test_detail: test_detail || "", // デフォルト値を提供するか、undefinedの場合の処理を追加
-                            test_title: test_title || "",
-                        });
-                    }
-                })
-
-                setData(newData);
-            } catch (error) {
-                console.error("error fetching data:", error);
-            }
-        }
-        fetchData();
-    }, []);
-
-    // useEffect(() => {
-    //     const postData = collection(db, "todo_show_test");
-    //     getDocs(postData).then((querySnapshot) => {
-    //       const postsData = querySnapshot.docs.map((doc) => ({
-    //         ...doc.data(), // ドキュメントデータを展開
-    //       }) as ShowType);
-    //       setData(postsData);
-    //     });
-    //   }, []);
+        const postData = collection(db, "todo_show_test");
+        getDocs(postData).then((querySnapshot) => {
+          const postsData = querySnapshot.docs.map((doc) => ({
+            ...doc.data(), // ドキュメントデータを展開
+          }) as ShowType);
+          setData(postsData);
+        });
+      }, []);
 
     console.log(data);
 
