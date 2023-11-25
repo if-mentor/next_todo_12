@@ -17,12 +17,12 @@ import { useRouter } from "next/navigation";
 
 const create = () => {
   const router = useRouter();
-  const [todoTitle, setTodoTitle] = useState("");
-  const [todoText, setTodoText] = useState("");
-  const [selectPriority, setSelectPriority] = useState("High");
+  const [todoTitle, setTodoTitle] = useState<string>("");
+  const [todoText, setTodoText] = useState<string>("");
+  const [selectPriority, setSelectPriority] = useState<string>("High");
   // createボタンが押されたら
   const handleClickCreate = () => {
-    if (todoText === "" || todoText === "") return;
+    if (todoTitle === "" || todoText === "") return;
     // 新しいランダムなドキュメントを作る
     // 押すたびにidが発行される
     const docRef = doc(collection(db, "todoprops"));
@@ -38,7 +38,7 @@ const create = () => {
     });
     setTodoTitle("");
     setTodoText("");
-    setSelectPriority("");
+    setSelectPriority("Hight");
     router.push("/top");
   };
 
