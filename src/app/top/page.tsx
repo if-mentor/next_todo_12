@@ -229,7 +229,9 @@ export default function Top() {
               {taskList.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
-                    {task.title}
+                    <Link as={NextLink} href={'/show/' + task.id}>
+                      {task.title}
+                    </Link>
                   </Td>
                   <Td h="56px">
                     <Button
