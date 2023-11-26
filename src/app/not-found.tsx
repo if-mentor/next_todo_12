@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Radio, RadioGroup, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
+import { Box, Button, Flex, Text} from '@chakra-ui/react';
 import Link from 'next/link';
 
 const NotFound = () =>{

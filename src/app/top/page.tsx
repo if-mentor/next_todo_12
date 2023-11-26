@@ -15,10 +15,52 @@ import {
   Td,
   TableContainer,
   Text,
+  Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
+import { collection, onSnapshot, } from 'firebase/firestore'
+import { db } from '@/libs/firebase'
+import { useEffect, useState } from "react"
+import NextLink from 'next/link'
+
+type Task = {
+  id: string,
+  name: string,
+  priority: number,
+  status: number,
+  created_at: string,
+  updated_at: string,
+}
+
+const formatDate = (date: Date): string => {
+  return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
+}
 
 export default function Top() {
+  const [taskList, setTaskList] = useState<Task[]>([])
+
+  useEffect(() => {
+    const q = collection(db, 'todo_bb')
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const result: Task[] = []
+      querySnapshot.docs.forEach((doc) => {
+        const task = doc.data()
+        const createdAt = new Date(task.created_at.seconds * 1000)
+        const updatedAt = new Date(task.updated_at.seconds * 1000)
+        result.push({
+          id: doc.id,
+          name: task.name,
+          priority: task.priority,
+          status: task.status,
+          created_at: formatDate(createdAt),
+          updated_at: formatDate(updatedAt),
+        })
+      })
+
+      setTaskList(result)
+    })
+  }, [])
+
   return (
     <>
       <header>
@@ -111,13 +153,15 @@ export default function Top() {
             </Button>
           </Box>
           <Box pt="32px">
-            <IconButton
-              aria-label="Search database"
-              icon={<EditIcon />}
-              borderRadius="30px"
-              bgColor="#68D391"
-              ml={400}
-            />
+            <Link href='/create'>
+              <IconButton
+                aria-label="Search database"
+                icon={<EditIcon />}
+                borderRadius="30"
+                bgColor="#68D391"
+                ml={400}
+              />
+            </Link>
           </Box>
         </Box>
       </nav>
@@ -182,209 +226,44 @@ export default function Top() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td fontWeight="bold">
-                  Github上に静的サイトをホスティングする
-                </Td>
-                <Td h="56px">
-                  <Button
-                    fontSize="12px"
-                    w="104px"
-                    h="40px"
-                    border="1px solid"
-                    borderRadius="30px"
-                    bgColor="#C6F6D5"
-                  >
-                    NOT STARTED
-                  </Button>
-                </Td>
-                <Td>
-                  <Select border="1px solid" borderColor="tomato" w="112px">
-                    <option value="High">High</option>
-                    <option value="Middle">Middle</option>
-                    <option value="LOW">LOW</option>
-                  </Select>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td>
-                  <EditIcon w="50px" />
-                  <DeleteIcon />
-                </Td>
-              </Tr>
-              <Tr>
-                <Td fontWeight="bold">ReactでTodoサイトを作成する</Td>
-                <Td h="56px">
-                  <Button
-                    w="104px"
-                    h="40px"
-                    border="1px solid"
-                    borderRadius="30px"
-                    bgColor="#2F855A"
-                  >
-                    DOING
-                  </Button>
-                </Td>
-                <Td>
-                  <Select
-                    placeholder="Low"
-                    border="1px solid"
-                    borderColor="tomato"
-                    w="112px"
-                  >
-                    <option value="High">High</option>
-                    <option value="Middle">Middle</option>
-                    <option value="LOW">Low</option>
-                  </Select>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td>
-                  <EditIcon w="50px" />
-                  <DeleteIcon />
-                </Td>
-              </Tr>
-              <Tr>
-                <Td fontWeight="bold">Firestore Hostingを学習する</Td>
-                <Td h="56px">
-                  <Button
-                    w="104px"
-                    h="40px"
-                    border="1px solid"
-                    borderRadius="30px"
-                    bgColor="#68D391"
-                  >
-                    DONE
-                  </Button>
-                </Td>
-                <Td>
-                  <Select
-                    placeholder="Middle"
-                    border="1px solid"
-                    borderColor="tomato"
-                    w="112px"
-                  >
-                    <option value="High">High</option>
-                    <option value="Middle">Middle</option>
-                    <option value="LOW">LOW</option>
-                  </Select>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td>
-                  <EditIcon w="50px" />
-                  <DeleteIcon />
-                </Td>
-              </Tr>
-              <Tr>
-                <Td fontWeight="bold">感謝の正拳突き</Td>
-                <Td h="56px">
-                  <Button
-                    w="104px"
-                    h="40px"
-                    border="1px solid"
-                    borderRadius="30px"
-                    bgColor="#2F855A"
-                  >
-                    DOING
-                  </Button>
-                </Td>
-                <Td>
-                  <Select border="1px solid" borderColor="tomato" w="112px">
-                    <option value="High">High</option>
-                    <option value="Middle">Middle</option>
-                    <option value="LOW">LOW</option>
-                  </Select>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td>
-                  <EditIcon w="50px" />
-                  <DeleteIcon />
-                </Td>
-              </Tr>
-              <Tr>
-                <Td fontWeight="bold">二重の極み</Td>
-                <Td h="56px">
-                  <Button
-                    w="104px"
-                    h="40px"
-                    border="1px solid"
-                    borderRadius="30px"
-                    bgColor="#68D391"
-                  >
-                    DONE
-                  </Button>
-                </Td>
-                <Td>
-                  <Select border="1px solid" borderColor="tomato" w="112px">
-                    <option value="High">High</option>
-                    <option value="Middle">Middle</option>
-                    <option value="LOW">LOW</option>
-                  </Select>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td>
-                  <EditIcon w="50px" />
-                  <DeleteIcon />
-                </Td>
-              </Tr>
-              <Tr>
-                <Td fontWeight="bold">魔封波</Td>
-                <Td h="56px">
-                  <Button
-                    w="104px"
-                    border="1px solid"
-                    borderRadius="30px"
-                    bgColor="#2F855A"
-                  >
-                    DOING
-                  </Button>
-                </Td>
-                <Td>
-                  <Select
-                    placeholder="Low"
-                    border="1px solid"
-                    borderColor="tomato"
-                    w="112px"
-                  >
-                    <option value="High">High</option>
-                    <option value="Middle">Middle</option>
-                    <option value="LOW">LOW</option>
-                  </Select>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td fontWeight="bold">
-                  <Text>2020-11-8 18:55</Text>
-                </Td>
-                <Td>
-                  <EditIcon w="50px" />
-                  <DeleteIcon />
-                </Td>
-              </Tr>
+              {taskList.map((task) => (
+                <Tr key={task.id}>
+                  <Td fontWeight="bold">
+                    {task.name}
+                  </Td>
+                  <Td h="56px">
+                    <Button
+                      fontSize="12px"
+                      w="104px"
+                      h="40px"
+                      border="1px solid"
+                      borderRadius="30"
+                      bgColor="#C6F6D5"
+                    >
+                      NOT STARTED
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Select border="1px solid" borderColor="tomato" w="112px">
+                      <option value="High">High</option>
+                      <option value="Middle">Middle</option>
+                      <option value="LOW">LOW</option>
+                    </Select>
+                  </Td>
+                  <Td fontWeight="bold">
+                    {task.created_at}
+                  </Td>
+                  <Td fontWeight="bold">
+                    {task.updated_at}
+                  </Td>
+                  <Td>
+                    <Link as={NextLink} href={'/edit/' + task.id}>
+                      <EditIcon w="50px" />
+                    </Link>
+                    <DeleteIcon />
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>
