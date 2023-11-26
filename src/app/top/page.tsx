@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot, } from 'firebase/firestore'
+import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/libs/firebase'
 import { useEffect, useState } from "react"
 import NextLink from 'next/link'
@@ -38,9 +38,51 @@ const formatDate = (date: Date): string => {
 
 export default function Top() {
   const [taskList, setTaskList] = useState<Todo[]>([])
+  const [search, setSearch] = useState<string>('')
+  const [status, setStatus] = useState<string>('')
+  const [priority, setPriority] = useState<string>('')
+
+  const changeSearch = (e: Event) => {
+    setSearch(e.target.value)
+  }
+
+  const changeStatus = (e: Event) => {
+    setStatus(e.target.value)
+    document.querySelector('[name="priority"]').disabled = e.target.value ? true : false
+  }
+
+  const changePriority = (e: Event) => {
+    setPriority(e.target.value)
+    document.querySelector('[name="status"]').disabled = e.target.value ? true : false
+  }
+
+  const clickReset = () => {
+    const priority = document.querySelector('[name="priority"]')
+    priority.disabled = false
+    priority.selectedIndex = 0
+    setPriority('')
+
+    const status = document.querySelector('[name="status"]')
+    status.disabled = false
+    status.selectedIndex = 0
+    status.value = ''
+    setStatus('')
+
+    document.querySelector('[name="search"]').value = ''
+  }
 
   useEffect(() => {
-    const q = collection(db, 'todos')
+    let q;
+    if (search && status) {
+      const todosRef = collection(db, 'todos')
+      q = query(todosRef, where('title', '==', search), where('status', '==', status))
+    } else if (search && priority) {
+      const todosRef = collection(db, 'todos')
+      q = query(todosRef, where('title', '==', search), where('priority', '==', priority))
+    } else {
+      q = collection(db, 'todos')
+    }
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result: Todo[] = []
       querySnapshot.docs.forEach((doc) => {
@@ -59,7 +101,7 @@ export default function Top() {
 
       setTaskList(result)
     })
-  }, [])
+  }, [search, status, priority])
 
   return (
     <>
@@ -109,6 +151,8 @@ export default function Top() {
                 border="1px solid"
                 my={2}
                 placeholder="Text"
+                name="search"
+                onChange={(e: Event) => changeSearch(e)}
               />
             </InputGroup>
           </Box>
@@ -120,6 +164,8 @@ export default function Top() {
               my={2}
               fontWeight="bold"
               border="1px solid"
+              name="status"
+              onChange={(e: Event) => changeStatus(e)}
             >
               <option value="NOT STARTED">NOT STARTED</option>
               <option value="DOING">DOING</option>
@@ -134,6 +180,8 @@ export default function Top() {
               my={2}
               fontWeight="bold"
               border="1px solid"
+              name="priority"
+              onChange={(e: Event) => changePriority(e)}
             >
               <option value="High">High</option>
               <option value="Middle">Middle</option>
@@ -148,6 +196,7 @@ export default function Top() {
               bgColor="#A0AEC0"
               fontSize="18px"
               border="1px solid"
+              onClick={() => clickReset()}
             >
               RESET
             </Button>
