@@ -18,35 +18,46 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot, } from 'firebase/firestore'
-import { db } from '@/libs/firebase'
-import { useEffect, useState } from "react"
-import NextLink from 'next/link'
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/libs/firebase";
+import { useEffect, useState } from "react";
+import NextLink from "next/link";
+import ReactPaginate from "react-paginate";
 
 type Task = {
-  id: string,
-  name: string,
-  priority: number,
-  status: number,
-  created_at: string,
-  updated_at: string,
-}
+  id: string;
+  name: string;
+  priority: number;
+  status: number;
+  created_at: string;
+  updated_at: string;
+};
 
 const formatDate = (date: Date): string => {
-  return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
-}
+  return (
+    date.getFullYear() +
+    "-" +
+    (1 + date.getMonth()).toString().padStart(2, "0") +
+    "-" +
+    date.getDate().toString().padStart(2, "0") +
+    " " +
+    date.getHours().toString().padStart(2, "0") +
+    ":" +
+    date.getMinutes().toString().padStart(2, "0")
+  );
+};
 
 export default function Top() {
-  const [taskList, setTaskList] = useState<Task[]>([])
+  const [taskList, setTaskList] = useState<Task[]>([]);
 
   useEffect(() => {
-    const q = collection(db, 'todo_bb')
+    const q = collection(db, "todo_bb");
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const result: Task[] = []
+      const result: Task[] = [];
       querySnapshot.docs.forEach((doc) => {
-        const task = doc.data()
-        const createdAt = new Date(task.created_at.seconds * 1000)
-        const updatedAt = new Date(task.updated_at.seconds * 1000)
+        const task = doc.data();
+        const createdAt = new Date(task.created_at.seconds * 1000);
+        const updatedAt = new Date(task.updated_at.seconds * 1000);
         result.push({
           id: doc.id,
           name: task.name,
@@ -54,12 +65,12 @@ export default function Top() {
           status: task.status,
           created_at: formatDate(createdAt),
           updated_at: formatDate(updatedAt),
-        })
-      })
+        });
+      });
 
-      setTaskList(result)
-    })
-  }, [])
+      setTaskList(result);
+    });
+  }, []);
 
   return (
     <>
@@ -153,7 +164,7 @@ export default function Top() {
             </Button>
           </Box>
           <Box pt="32px">
-            <Link href='/create'>
+            <Link href="/create">
               <IconButton
                 aria-label="Search database"
                 icon={<EditIcon />}
@@ -228,9 +239,7 @@ export default function Top() {
             <Tbody>
               {taskList.map((task) => (
                 <Tr key={task.id}>
-                  <Td fontWeight="bold">
-                    {task.name}
-                  </Td>
+                  <Td fontWeight="bold">{task.name}</Td>
                   <Td h="56px">
                     <Button
                       fontSize="12px"
@@ -250,14 +259,10 @@ export default function Top() {
                       <option value="LOW">LOW</option>
                     </Select>
                   </Td>
-                  <Td fontWeight="bold">
-                    {task.created_at}
-                  </Td>
-                  <Td fontWeight="bold">
-                    {task.updated_at}
-                  </Td>
+                  <Td fontWeight="bold">{task.created_at}</Td>
+                  <Td fontWeight="bold">{task.updated_at}</Td>
                   <Td>
-                    <Link as={NextLink} href={'/edit/' + task.id}>
+                    <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
                     </Link>
                     <DeleteIcon />
