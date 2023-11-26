@@ -24,6 +24,7 @@ const create = () => {
 
   // CREATEボタンが押されたら
   const handleClickCreate = () => {
+    // もしtitleまたはdetailに何も入力されていなかったら
     if (todoTitle === "" || todoDetail === "") return;
     // Firebaseのデータベースにデータを追加する
     const addDataRef = collection(db, "todos");
