@@ -31,7 +31,7 @@ const create = () => {
     addDoc(addDataRef, {
       id: uuidv4(),
       title: todoTitle,
-      text: todoDetail,
+      detail: todoDetail,
       priority: selectPriority,
       status: "NOT STARTED",
       created_at: Timestamp.now(),
