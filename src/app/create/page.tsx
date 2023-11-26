@@ -12,33 +12,37 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { db } from "@/libs/firebase";
-import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
+import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 const create = () => {
   const router = useRouter();
   const [todoTitle, setTodoTitle] = useState<string>("");
-  const [todoText, setTodoText] = useState<string>("");
+  const [todoDetail, setTodoDetail] = useState<string>("");
   const [selectPriority, setSelectPriority] = useState<string>("High");
-  // createボタンが押されたら
+
+  // CREATEボタンが押されたら
   const handleClickCreate = () => {
-    if (todoTitle === "" || todoText === "") return;
-    // 新しいランダムなドキュメントを作る
-    // 押すたびにidが発行される
-    const docRef = doc(collection(db, "todoprops"));
+    if (todoTitle === "" || todoDetail === "") return;
     // Firebaseのデータベースにデータを追加する
-    setDoc(doc(db, "todoposts", docRef.id), {
-      id: docRef.id,
+    const addDataRef = collection(db, "todos");
+    addDoc(addDataRef, {
+      id: uuidv4(),
       title: todoTitle,
-      text: todoText,
+      text: todoDetail,
       priority: selectPriority,
       status: "NOT STARTED",
-      create_at: Timestamp.now(),
-      update_at: Timestamp.now(),
+      created_at: Timestamp.now(),
+      updated_at: Timestamp.now(),
     });
     setTodoTitle("");
-    setTodoText("");
-    setSelectPriority("Hight");
+    setTodoDetail("");
+    setSelectPriority("High");
+    router.push("/top");
+  };
+  // BACKボタンが押されたら
+  const handleClickBack = () => {
     router.push("/top");
   };
 
@@ -76,6 +80,7 @@ const create = () => {
       <Flex mt={4} ml="100px">
         <Box ml="968px">
           <Button
+            onClick={() => handleClickBack()}
             w="112px"
             h="40px"
             bg="#68D391"
@@ -115,8 +120,8 @@ const create = () => {
           DETAIL
         </Text>
         <Textarea
-          value={todoText}
-          onChange={(e) => setTodoText(e.target.value)}
+          value={todoDetail}
+          onChange={(e) => setTodoDetail(e.target.value)}
           w="1080px"
           h="204px"
           size="lg"
