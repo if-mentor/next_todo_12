@@ -22,6 +22,8 @@ import { collection, onSnapshot, } from 'firebase/firestore'
 import { db } from '@/libs/firebase'
 import { useEffect, useState } from "react"
 import NextLink from 'next/link'
+import ReactPaginate from "react-paginate";
+import styles from './top.module.css';
 
 type Task = {
   id: string,
@@ -37,10 +39,31 @@ const formatDate = (date: Date): string => {
 }
 
 export default function Top() {
-  const [taskList, setTaskList] = useState<Task[]>([])
+  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [itemOffset, setItemOffset] = useState(0);
+  // ページ数
+  const [pageCount, setPageCount] = useState(0);
+  // 1ページごとのTodo 配列
+  const [currentItems, setCurrentItems] = useState<Task[]>([]);
+  // 1ページの表示数
+  const itemsPerPage = 3;
+
+  const handlePageClick = (e: { selected: number }) => {
+    const newOffset = (e.selected * itemsPerPage) % taskList.length;
+    console.log(
+      `User requested page number ${e.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
+  };
 
   useEffect(() => {
-    const q = collection(db, 'todo_bb')
+    const endOffset = itemOffset + itemsPerPage;
+    setCurrentItems(taskList.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(taskList.length / itemsPerPage));
+  }, [taskList, itemOffset]);
+
+  useEffect(() => {
+    const q = collection(db, 'todos')
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result: Task[] = []
       querySnapshot.docs.forEach((doc) => {
@@ -59,6 +82,8 @@ export default function Top() {
 
       setTaskList(result)
     })
+
+    return () => unsubscribe();
   }, [])
 
   return (
@@ -226,7 +251,7 @@ export default function Top() {
               </Tr>
             </Thead>
             <Tbody>
-              {taskList.map((task) => (
+              {currentItems.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
                     {task.name}
@@ -268,7 +293,18 @@ export default function Top() {
           </Table>
         </TableContainer>
       </main>
-      <footer></footer>
+
+      <ReactPaginate
+        pageCount={pageCount}
+        onPageChange={handlePageClick}
+        nextLabel=">"
+        previousLabel="<"
+        breakLabel="..."
+        className={styles.pagination}
+        pageLinkClassName={styles.page}
+        nextLinkClassName={styles.next}
+        previousLinkClassName={styles.previous}
+      />
     </>
   );
 }
