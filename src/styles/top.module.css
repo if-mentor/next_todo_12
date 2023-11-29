@@ -1,0 +1,9 @@
+.pagination {
+  display: flex;
+  margin: auto;
+}
+.next {
+  color: blue;
+  padding: 10px;
+  border: 1px solid black;
+}

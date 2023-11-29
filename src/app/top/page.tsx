@@ -23,6 +23,8 @@ import { db } from "@/libs/firebase";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import ReactPaginate from "react-paginate";
+import Pagination from "../components/Pagination";
+import styles from "../../styles/top.module.css";
 
 type Task = {
   id: string;
@@ -47,6 +49,9 @@ const formatDate = (date: Date): string => {
   );
 };
 
+const handlePageClick = (e: any) => {};
+
+// const [pageCount, setPageCount] = useState(0);
 export default function Top() {
   const [taskList, setTaskList] = useState<Task[]>([]);
 
@@ -273,7 +278,22 @@ export default function Top() {
           </Table>
         </TableContainer>
       </main>
-      <footer></footer>
+      <footer>
+        <ReactPaginate
+          pageCount={Math.ceil(taskList.length / 1)}
+          onPageChange={handlePageClick}
+          // pageRangeDisplayed={5}
+          className={styles.pagination}
+          previousLabel="<"
+          // breakLabel="..."
+          nextLabel=">"
+          nextClassName={styles.next}
+          // pageCount={pageCount}
+          previousClassName="a"
+          renderOnZeroPageCount={null}
+        />
+        {/* <Pagination number={taskList.length} /> */}
+      </footer>
     </>
   );
 }
