@@ -23,12 +23,11 @@ import { db } from "@/libs/firebase";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import ReactPaginate from "react-paginate";
-import Pagination from "../components/Pagination";
 import styles from "../../styles/top.module.css";
 
 type Task = {
   id: string;
-  name: string;
+  title: string;
   priority: number;
   status: number;
   created_at: string;
@@ -49,14 +48,35 @@ const formatDate = (date: Date): string => {
   );
 };
 
-const handlePageClick = (e: any) => {};
-
-// const [pageCount, setPageCount] = useState(0);
 export default function Top() {
+  // 入力したTodoの配列
   const [taskList, setTaskList] = useState<Task[]>([]);
+  // 1ページに表示するTodoの数
+  const itemsPerPage = 6;
+  // そのページの最初のTodo（配列）の番号を格納
+  const [itemOffset, setItemOffset] = useState(0);
+  // 今のページ数
+  const [pageCount, setPageCount] = useState(0);
+  //  1ページごとのTodoの配列
+  const [currentItems, setCurrentItems] = useState<Task[]>([]);
+
+  //e: { selected: number }はページ数-1 (例：2ページ目を押すと1)
+  const handlePageClick = (e: { selected: number }) => {
+    const newOffset = (e.selected * itemsPerPage) % taskList.length;
+    setItemOffset(newOffset);
+  };
+  useEffect(() => {
+    // 次のページの最初のTodo（配列）の番号を取得（例：2ページ目なら6番目）
+    // 理由：slice関数で区切る時に区切りたい配列番号の次の配列番号の取得が必要になる為
+    const endOffset = itemOffset + itemsPerPage;
+    // Todoの配列を6個ずつ切り取る
+    setCurrentItems(taskList.slice(itemOffset, endOffset));
+    //全体のページ数を出す計算式（todoの数÷1ページに表示するtodoの数）小数点以下繰り上げ
+    setPageCount(Math.ceil(taskList.length / itemsPerPage));
+  }, [taskList, itemOffset]);
 
   useEffect(() => {
-    const q = collection(db, "todo_bb");
+    const q = collection(db, "todos");
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result: Task[] = [];
       querySnapshot.docs.forEach((doc) => {
@@ -65,7 +85,7 @@ export default function Top() {
         const updatedAt = new Date(task.updated_at.seconds * 1000);
         result.push({
           id: doc.id,
-          name: task.name,
+          title: task.title,
           priority: task.priority,
           status: task.status,
           created_at: formatDate(createdAt),
@@ -75,6 +95,7 @@ export default function Top() {
 
       setTaskList(result);
     });
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -242,9 +263,9 @@ export default function Top() {
               </Tr>
             </Thead>
             <Tbody>
-              {taskList.map((task) => (
+              {currentItems.map((task) => (
                 <Tr key={task.id}>
-                  <Td fontWeight="bold">{task.name}</Td>
+                  <Td fontWeight="bold">{task.title}</Td>
                   <Td h="56px">
                     <Button
                       fontSize="12px"
@@ -278,22 +299,20 @@ export default function Top() {
           </Table>
         </TableContainer>
       </main>
-      <footer>
-        <ReactPaginate
-          pageCount={Math.ceil(taskList.length / 1)}
-          onPageChange={handlePageClick}
-          // pageRangeDisplayed={5}
-          className={styles.pagination}
-          previousLabel="<"
-          // breakLabel="..."
-          nextLabel=">"
-          nextClassName={styles.next}
-          // pageCount={pageCount}
-          previousClassName="a"
-          renderOnZeroPageCount={null}
-        />
-        {/* <Pagination number={taskList.length} /> */}
-      </footer>
+      <footer></footer>
+      <ReactPaginate
+        pageCount={pageCount} // 必須：総ページ数
+        onPageChange={handlePageClick}
+        previousLabel="<"
+        breakLabel="..."
+        nextLabel=">"
+        className={styles.pagination}
+        pageLinkClassName={styles.page} //paginationのリンクのクラス名
+        nextLinkClassName={styles.next} //'>'のリンクのクラス名
+        previousLinkClassName={styles.previous} //'<'のリンクのクラス名
+        marginPagesDisplayed={2} //一番最初と最後を基準にして、そこからいくつページ数を表示するか
+        breakClassName={styles.break} //「…」のクラス名
+      />
     </>
   );
 }

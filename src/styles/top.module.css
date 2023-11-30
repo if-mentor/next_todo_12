@@ -1,9 +1,18 @@
 .pagination {
   display: flex;
-  margin: auto;
+  justify-content: center; /*主軸（横幅）中央寄せで配置*/
+  align-items: center; /*	親要素（ulタグ）の上下中央を基準に、子要素(liタグ)を中央揃えで配置*/
+  margin-top: 40px;
+  list-style: none; /* liタグの・を消す */
 }
-.next {
-  color: blue;
-  padding: 10px;
-  border: 1px solid black;
+.next,
+.previous,
+.break,
+.page {
+  padding: 8px 16px;
+  border: 1px solid gray;
+  border-radius: 10px;
+  margin: 0 12px;
+  box-shadow: 0px 10px 10px -5px gray;
+  font-weight: bold;
 }
