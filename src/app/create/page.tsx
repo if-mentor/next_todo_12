@@ -11,8 +11,37 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { db } from "@/libs/firebase";
+import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 const create = () => {
+  const router = useRouter();
+  const [todoTitle, setTodoTitle] = useState<string>("");
+  const [todoText, setTodoText] = useState<string>("");
+  const [selectPriority, setSelectPriority] = useState<string>("High");
+  // createボタンが押されたら
+  const handleClickCreate = () => {
+    if (todoTitle === "" || todoText === "") return;
+    // 新しいランダムなドキュメントを作る
+    // 押すたびにidが発行される
+    const docRef = doc(collection(db, "todoprops"));
+    // Firebaseのデータベースにデータを追加する
+    setDoc(doc(db, "todoposts", docRef.id), {
+      id: docRef.id,
+      title: todoTitle,
+      text: todoText,
+      priority: selectPriority,
+      status: "NOT STARTED",
+      create_at: Timestamp.now(),
+      update_at: Timestamp.now(),
+    });
+    setTodoTitle("");
+    setTodoText("");
+    setSelectPriority("Hight");
+    router.push("/top");
+  };
+
   return (
     <Box as="main" w="1280px" mx="auto">
       <Flex as="header" h="80px" bg="#68D391" alignItems="center" px={5}>
@@ -65,6 +94,10 @@ const create = () => {
           TITLE
         </Text>
         <Textarea
+          value={todoTitle}
+          onChange={(e) => {
+            setTodoTitle(e.target.value);
+          }}
           w="1080px"
           h="72px"
           size="lg"
@@ -82,6 +115,8 @@ const create = () => {
           DETAIL
         </Text>
         <Textarea
+          value={todoText}
+          onChange={(e) => setTodoText(e.target.value)}
           w="1080px"
           h="204px"
           size="lg"
@@ -98,7 +133,10 @@ const create = () => {
         <Text fontSize="24px" fontWeight="bold">
           PRIORITY
         </Text>
-        <RadioGroup defaultValue="High">
+        <RadioGroup
+          onChange={(e) => setSelectPriority(e)}
+          value={selectPriority}
+        >
           <Stack direction="row">
             <Radio value="High" fontWeight="bold" fontSize="24px" mr={4}>
               High
@@ -115,6 +153,7 @@ const create = () => {
       <Flex mt={4} ml="100px">
         <Box ml="968px">
           <Button
+            onClick={() => handleClickCreate()}
             w="112px"
             h="40px"
             bg="#25855A"
