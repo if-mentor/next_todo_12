@@ -20,7 +20,7 @@ import {
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/libs/firebase'
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import NextLink from 'next/link'
 
 type Todo = {
@@ -32,6 +32,10 @@ type Todo = {
   updated_at: string,
 }
 
+type Priority = HTMLSelectElement | null
+type Status = HTMLSelectElement | null
+type Search = HTMLInputElement | null
+
 const formatDate = (date: Date): string => {
   return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
 }
@@ -42,33 +46,35 @@ export default function Top() {
   const [status, setStatus] = useState<string>('')
   const [priority, setPriority] = useState<string>('')
 
-  const changeSearch = (e: Event) => {
+  const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
   }
 
-  const changeStatus = (e: Event) => {
+  const changeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
     setStatus(e.target.value)
-    document.querySelector('[name="priority"]').disabled = e.target.value ? true : false
   }
 
-  const changePriority = (e: Event) => {
+  const changePriority = (e: ChangeEvent<HTMLSelectElement>) => {
     setPriority(e.target.value)
-    document.querySelector('[name="status"]').disabled = e.target.value ? true : false
   }
 
   const clickReset = () => {
-    const priority = document.querySelector('[name="priority"]')
-    priority.disabled = false
-    priority.selectedIndex = 0
+    const priority: Priority = document.querySelector('[name="priority"]')
+    if (priority) {
+      priority.selectedIndex = 0
+    }
     setPriority('')
 
-    const status = document.querySelector('[name="status"]')
-    status.disabled = false
-    status.selectedIndex = 0
-    status.value = ''
+    const status: Status = document.querySelector('[name="status"]')
+    if (status) {
+      status.selectedIndex = 0
+    }
     setStatus('')
 
-    document.querySelector('[name="search"]').value = ''
+    const search: Search = document.querySelector('[name="search"]')
+    if (search) {
+      search.value = ''
+    }
   }
 
   useEffect(() => {
@@ -152,7 +158,7 @@ export default function Top() {
                 my={2}
                 placeholder="Text"
                 name="search"
-                onChange={(e: Event) => changeSearch(e)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => changeSearch(e)}
               />
             </InputGroup>
           </Box>
@@ -165,7 +171,8 @@ export default function Top() {
               fontWeight="bold"
               border="1px solid"
               name="status"
-              onChange={(e: Event) => changeStatus(e)}
+              disabled={Boolean(priority)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => changeStatus(e)}
             >
               <option value="NOT STARTED">NOT STARTED</option>
               <option value="DOING">DOING</option>
@@ -181,7 +188,8 @@ export default function Top() {
               fontWeight="bold"
               border="1px solid"
               name="priority"
-              onChange={(e: Event) => changePriority(e)}
+              disabled={Boolean(status)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => changePriority(e)}
             >
               <option value="High">High</option>
               <option value="Middle">Middle</option>
