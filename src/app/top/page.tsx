@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot, query, where } from 'firebase/firestore'
+import { QueryConstraint, collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/libs/firebase'
 import { ChangeEvent, useEffect, useState } from "react"
 import NextLink from 'next/link'
@@ -75,19 +75,24 @@ export default function Top() {
     if (search) {
       search.value = ''
     }
+    setSearch('')
   }
 
   useEffect(() => {
-    let q;
-    if (search && status) {
-      const todosRef = collection(db, 'todos')
-      q = query(todosRef, where('title', '==', search), where('status', '==', status))
-    } else if (search && priority) {
-      const todosRef = collection(db, 'todos')
-      q = query(todosRef, where('title', '==', search), where('priority', '==', priority))
-    } else {
-      q = collection(db, 'todos')
+    const wheres: QueryConstraint[] = []
+    if (status) {
+      wheres.push(where('status', '==', status))
+      if (search) {
+        wheres.push(where('title', '==', search))
+      }
+    } else if (priority) {
+      wheres.push(where('priority', '==', priority))
+      if (search) {
+        wheres.push(where('title', '==', search))
+      }
     }
+    const todosRef = collection(db, 'todos')
+    const q = query(todosRef, ...wheres)
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result: Todo[] = []
