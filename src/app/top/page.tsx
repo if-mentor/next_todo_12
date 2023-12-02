@@ -18,10 +18,12 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot, } from 'firebase/firestore'
-import { db } from '@/libs/firebase'
-import { useEffect, useState } from "react"
-import NextLink from 'next/link'
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/libs/firebase";
+import { useEffect, useState } from "react";
+import NextLink from "next/link";
+import ReactPaginate from "react-paginate";
+import styles from "../../styles/top.module.css";
 
 type Todo = {
   id: string,
@@ -33,20 +35,54 @@ type Todo = {
 }
 
 const formatDate = (date: Date): string => {
-  return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
-}
+  return (
+    date.getFullYear() +
+    "-" +
+    (1 + date.getMonth()).toString().padStart(2, "0") +
+    "-" +
+    date.getDate().toString().padStart(2, "0") +
+    " " +
+    date.getHours().toString().padStart(2, "0") +
+    ":" +
+    date.getMinutes().toString().padStart(2, "0")
+  );
+};
 
 export default function Top() {
-  const [taskList, setTaskList] = useState<Todo[]>([])
+  // 入力したTodoの配列
+  const [taskList, setTaskList] = useState<Todo[]>([]);
+  // 1ページに表示するTodoの数
+  const itemsPerPage = 6;
+  // そのページの最初のTodo（配列）の番号を格納
+  const [itemOffset, setItemOffset] = useState(0);
+  // 今のページ数
+  const [pageCount, setPageCount] = useState(0);
+  //  1ページごとのTodoの配列
+  const [currentItems, setCurrentItems] = useState<Todo[]>([]);
+
+  //e: { selected: number }はページ数-1 (例：2ページ目を押すと1)
+  const handlePageClick = (e: { selected: number }) => {
+    const newOffset = (e.selected * itemsPerPage) % taskList.length;
+    setItemOffset(newOffset);
+  };
+  useEffect(() => {
+    // 次のページの最初のTodo（配列）の番号を取得（例：2ページ目なら6番目）
+    // 理由：slice関数で区切る時に区切りたい配列番号の次の配列番号の取得が必要になる為
+    const endOffset = itemOffset + itemsPerPage;
+    // Todoの配列を6個ずつ切り取る
+    setCurrentItems(taskList.slice(itemOffset, endOffset));
+    //全体のページ数を出す計算式（todoの数÷1ページに表示するtodoの数）小数点以下繰り上げ
+    setPageCount(Math.ceil(taskList.length / itemsPerPage));
+  }, [taskList, itemOffset]);
 
   useEffect(() => {
-    const q = collection(db, 'todos')
+    const q = collection(db, "todos");
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const result: Todo[] = []
+      const result: Todo[] = [];
       querySnapshot.docs.forEach((doc) => {
-        const task = doc.data()
-        const createdAt = new Date(task.created_at.seconds * 1000)
-        const updatedAt = new Date(task.updated_at.seconds * 1000)
+        const task = doc.data();
+        const createdAt = new Date(task.created_at.seconds * 1000);
+        const updatedAt = new Date(task.updated_at.seconds * 1000);
         result.push({
           id: doc.id,
           title: task.title,
@@ -54,12 +90,13 @@ export default function Top() {
           status: task.status,
           created_at: formatDate(createdAt),
           updated_at: formatDate(updatedAt),
-        })
-      })
+        });
+      });
 
-      setTaskList(result)
-    })
-  }, [])
+      setTaskList(result);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <>
@@ -153,7 +190,7 @@ export default function Top() {
             </Button>
           </Box>
           <Box pt="32px">
-            <Link href='/create'>
+            <Link href="/create">
               <IconButton
                 aria-label="Search database"
                 icon={<EditIcon />}
@@ -226,7 +263,7 @@ export default function Top() {
               </Tr>
             </Thead>
             <Tbody>
-              {taskList.map((task) => (
+              {currentItems.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
                     <Link as={NextLink} href={'/show/' + task.id}>
@@ -252,14 +289,10 @@ export default function Top() {
                       <option value="LOW">LOW</option>
                     </Select>
                   </Td>
-                  <Td fontWeight="bold">
-                    {task.created_at}
-                  </Td>
-                  <Td fontWeight="bold">
-                    {task.updated_at}
-                  </Td>
+                  <Td fontWeight="bold">{task.created_at}</Td>
+                  <Td fontWeight="bold">{task.updated_at}</Td>
                   <Td>
-                    <Link as={NextLink} href={'/edit/' + task.id}>
+                    <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
                     </Link>
                     <DeleteIcon />
@@ -271,6 +304,19 @@ export default function Top() {
         </TableContainer>
       </main>
       <footer></footer>
+      <ReactPaginate
+        pageCount={pageCount} // 必須：総ページ数
+        onPageChange={handlePageClick}
+        previousLabel="<"
+        breakLabel="..."
+        nextLabel=">"
+        className={styles.pagination}
+        pageLinkClassName={styles.page} //paginationのリンクのクラス名
+        nextLinkClassName={styles.next} //'>'のリンクのクラス名
+        previousLinkClassName={styles.previous} //'<'のリンクのクラス名
+        marginPagesDisplayed={2} //一番最初と最後を基準にして、そこからいくつページ数を表示するか
+        breakClassName={styles.break} //「…」のクラス名
+      />
     </>
   );
 }
