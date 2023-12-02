@@ -20,6 +20,7 @@ import {
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { QueryConstraint, collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/libs/firebase'
+
 import { ChangeEvent, useEffect, useState } from "react"
 import NextLink from 'next/link'
 
