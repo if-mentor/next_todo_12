@@ -18,38 +18,40 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot, } from 'firebase/firestore'
-import { db } from '@/libs/firebase'
-import { useEffect, useState } from "react"
-import NextLink from 'next/link'
+import { collection, onSnapshot, } from 'firebase/firestore';
+import { db } from '@/libs/firebase';
+import { useEffect, useState } from "react";
+import NextLink from 'next/link';
+import { doc, deleteDoc } from 'firebase/firestore';
 
-type Task = {
+type Todo = {
   id: string,
-  name: string,
-  priority: number,
-  status: number,
+  title: string,
+  priority: string,
+  status: string,
   created_at: string,
   updated_at: string,
 }
+
 
 const formatDate = (date: Date): string => {
   return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
 }
 
 export default function Top() {
-  const [taskList, setTaskList] = useState<Task[]>([])
+  const [taskList, setTaskList] = useState<Todo[]>([])
 
   useEffect(() => {
-    const q = collection(db, 'todo_bb')
+    const q = collection(db, 'todos')
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const result: Task[] = []
+      const result: Todo[] = []
       querySnapshot.docs.forEach((doc) => {
         const task = doc.data()
         const createdAt = new Date(task.created_at.seconds * 1000)
         const updatedAt = new Date(task.updated_at.seconds * 1000)
         result.push({
           id: doc.id,
-          name: task.name,
+          title: task.title,
           priority: task.priority,
           status: task.status,
           created_at: formatDate(createdAt),
@@ -59,7 +61,17 @@ export default function Top() {
 
       setTaskList(result)
     })
-  }, [])
+  }, []);
+
+  const deleteTask = async (taskId:string) => {
+    const taskDoc = doc(db, 'todos', taskId);
+    try {
+      await deleteDoc(taskDoc);
+      console.log('タスクは正常に削除されました');
+    } catch (error) {
+      console.error('タスクの削除中にエラーが発生しました', error);
+    }
+  };
 
   return (
     <>
@@ -229,7 +241,7 @@ export default function Top() {
               {taskList.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
-                    {task.name}
+                    {task.title}
                   </Td>
                   <Td h="56px">
                     <Button
@@ -260,7 +272,7 @@ export default function Top() {
                     <Link as={NextLink} href={'/edit/' + task.id}>
                       <EditIcon w="50px" />
                     </Link>
-                    <DeleteIcon />
+                    <DeleteIcon   cursor="pointer" onClick={() => deleteTask(task.id)} />
                   </Td>
                 </Tr>
               ))}
