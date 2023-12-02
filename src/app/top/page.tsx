@@ -25,14 +25,14 @@ import NextLink from "next/link";
 import ReactPaginate from "react-paginate";
 import styles from "../../styles/top.module.css";
 
-type Task = {
-  id: string;
-  title: string;
-  priority: number;
-  status: number;
-  created_at: string;
-  updated_at: string;
-};
+type Todo = {
+  id: string,
+  title: string,
+  priority: string,
+  status: string,
+  created_at: string,
+  updated_at: string,
+}
 
 const formatDate = (date: Date): string => {
   return (
@@ -50,7 +50,7 @@ const formatDate = (date: Date): string => {
 
 export default function Top() {
   // 入力したTodoの配列
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useState<Todo[]>([]);
   // 1ページに表示するTodoの数
   const itemsPerPage = 6;
   // そのページの最初のTodo（配列）の番号を格納
@@ -58,7 +58,7 @@ export default function Top() {
   // 今のページ数
   const [pageCount, setPageCount] = useState(0);
   //  1ページごとのTodoの配列
-  const [currentItems, setCurrentItems] = useState<Task[]>([]);
+  const [currentItems, setCurrentItems] = useState<Todo[]>([]);
 
   //e: { selected: number }はページ数-1 (例：2ページ目を押すと1)
   const handlePageClick = (e: { selected: number }) => {
@@ -78,7 +78,7 @@ export default function Top() {
   useEffect(() => {
     const q = collection(db, "todos");
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const result: Task[] = [];
+      const result: Todo[] = [];
       querySnapshot.docs.forEach((doc) => {
         const task = doc.data();
         const createdAt = new Date(task.created_at.seconds * 1000);
@@ -265,7 +265,11 @@ export default function Top() {
             <Tbody>
               {currentItems.map((task) => (
                 <Tr key={task.id}>
-                  <Td fontWeight="bold">{task.title}</Td>
+                  <Td fontWeight="bold">
+                    <Link as={NextLink} href={'/show/' + task.id}>
+                      {task.title}
+                    </Link>
+                  </Td>
                   <Td h="56px">
                     <Button
                       fontSize="12px"
