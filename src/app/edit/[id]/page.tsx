@@ -9,8 +9,8 @@ type Task = {
   id: string;
   title:string;
   detail:string;
-  created_at: string;
-  updated_at: string;
+  created_at: Date | Timestamp; // DateまたはTimestamp型
+  updated_at: Date | Timestamp; // DateまたはTimestamp型
 };
 
 const Edit = ({ params }: { params: { id: string } }) => {
@@ -53,24 +53,33 @@ const Edit = ({ params }: { params: { id: string } }) => {
   console.log(task);
 
   // タスク更新処理
-  const handleUpdate = async () => {
-    if (!task) return;
+const handleUpdate = async () => {
+  if (!task) return;
 
-    try {
-      const docRef = doc(db, 'todos', task.id);
-      await updateDoc(docRef, {
-        title: task.title,
-        detail: task.detail,
-        created_at: Timestamp.fromDate(new Date(task.created_at)),
-        updated_at: Timestamp.fromDate(new Date())
-      });
+  try {
+    const docRef = doc(db, 'todos', task.id);
 
-      router.push('/top'); // Topページに戻る
-    } catch (error) {
-      console.error("タスクの更新中にエラーが発生:", error);
-      // ここでエラー通知を表示する
+    // 日付フィールドの処理
+    let created_at = task.created_at;
+    let updated_at = new Date(); // 現在の日時
+
+    // created_atがTimestamp型の場合、Dateに変換
+    if (created_at instanceof Timestamp) {
+      created_at = created_at.toDate();
     }
-  };
+
+    await updateDoc(docRef, {
+      title: task.title,
+      detail: task.detail,
+      created_at: Timestamp.fromDate(created_at),
+      updated_at: Timestamp.fromDate(updated_at)
+    });
+
+    router.push('/top'); // Topページに戻る
+  } catch (error) {
+    console.error("タスクの更新中にエラーが発生:", error);
+  }
+};
 
     // タスクデータの変更をハンドル
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>, field: keyof Task) => {
