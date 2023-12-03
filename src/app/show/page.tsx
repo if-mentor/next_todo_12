@@ -114,7 +114,6 @@ export default function Show() {
         const postData = collection(db, 'todo_show_comment');
         // onSnapshotにて、リアルタイムアップデートさせる
         const unsub = onSnapshot(collection(db, 'todo_show_comment'), (querySnapshot) => {
-            console.log(querySnapshot.docs);
             const commentsData = querySnapshot.docs.map((doc) => doc.data() as CommentType);
             setData(commentsData);
         });
