@@ -11,9 +11,19 @@ import { EditIcon } from '@chakra-ui/icons';
 // firebaseとの連携の際に、db変数を取り込むため
 import { db } from "@/libs/firebase";
 // firebaseのcloud firestoreを使用し、データベースにアクセスするためのモジュールや関数をインポート
-import { Timestamp, collection, getDocs, doc, setDoc } from "firebase/firestore";
+import { Timestamp, collection, getDocs, doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+type Todo = {
+    id: string,
+    title: string,
+    detail: string,
+    priority: string,
+    status: string,
+    created_at: string,
+    updated_at: string,
+}
 
 type CommentType = {
     id: number;
@@ -22,7 +32,26 @@ type CommentType = {
     date: string;
 }
 
+const formatDate = (date: Date): string => {
+    return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
+  }
+
 export default function Show() {
+    const docRef = doc(db, "todo_tasks", "task");
+    const dataGet = async () => {
+        const docSnap = await getDoc(docRef);
+
+        if(docSnap.exists()) {
+            console.log(docSnap.data());
+        } else {
+            console.log("no!!");
+        }
+    }
+
+    useEffect(() => {
+        dataGet();
+    }, []);
+
     // ルーター設定
     const router = useRouter();
 
@@ -82,16 +111,15 @@ export default function Show() {
 
     // コレクションの参照を取得する
     useEffect(() => {
-        // 取得に時間がかかるため、非同期を使用
-        const fetchData = async () => {
-            const postData = collection(db, 'todo_show_comment');
-            const querySnapshot = await getDocs(postData);
-            const postsData = querySnapshot.docs.map((doc) => doc.data() as CommentType);
-            setData(postsData);
-        };
-
-        fetchData();
-    }, [handleClickComment]);
+        const postData = collection(db, 'todo_show_comment');
+        // onSnapshotにて、リアルタイムアップデートさせる
+        const unsub = onSnapshot(collection(db, 'todo_show_comment'), (querySnapshot) => {
+            console.log(querySnapshot.docs);
+            const commentsData = querySnapshot.docs.map((doc) => doc.data() as CommentType);
+            setData(commentsData);
+        });
+        return () => unsub();
+    }, []);
 
     return (
         <Box position="relative">
