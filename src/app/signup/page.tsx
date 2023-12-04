@@ -8,34 +8,27 @@ import {
   FormControl,
   Spacer,
 } from "@chakra-ui/react";
-import { ChangeEvent, useState } from "react";
+import { useState, MouseEvent } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/libs/firebase";
 import { useRouter } from "next/navigation";
 
-type UserEmail = string;
+type RegisterEmail = string;
 
-type UserPassword = string;
+type RegisterPassword = string;
 
 export default function Home() {
   // useRouter:ユーザー登録（SignUP)が完了してログイン後、画面を遷移させるために使う
   const router = useRouter();
   // useState:ローカルステート（ローカルの状態）に入力を保存
-  const [email, setEmail] = useState<UserEmail>("");
-  const [password, setPassword] = useState<UserPassword>("");
+  const [registerEmail, setRegisterEmail] = useState<RegisterEmail>("");
+  const [registerPassword, setRegisterPassword] =
+    useState<RegisterPassword>("");
 
-  // onChangeEmail:ユーザーからの入力のEmailをローカルステートであるuseStateに保存する為の関数
-  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-  // onChangePassword:ユーザーからの入力のPPasswordをローカルステートであるuseStateに保存する為の関数
-  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
-  // onClick:SIGNUPボタンを押下しFirebaseに登録する処理
-  const handleSignUp = async () => {
-    await createUserWithEmailAndPassword(auth, email, password)
+  // SIGNUPボタンを押下しFirebaseに登録する処理
+  const handleSignUp = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
       .then((userCredentail) => {
         const user = userCredentail.user;
         console.log("user", user);
@@ -100,7 +93,8 @@ export default function Home() {
                   rounded="10"
                   border="none"
                   bgColor="#F0FFF4"
-                  onChange={onChangeEmail}
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
                 />
               </FormControl>
               <FormControl w="100%">
@@ -120,7 +114,8 @@ export default function Home() {
                   rounded="10"
                   border="none"
                   bgColor="#F0FFF4"
-                  onChange={onChangePassword}
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
                 />
               </FormControl>
             </Flex>
