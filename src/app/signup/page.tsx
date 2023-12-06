@@ -12,6 +12,7 @@ import { useState, useEffect, MouseEvent } from "react";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  User,
 } from "firebase/auth";
 import { auth } from "@/libs/firebase";
 import { useRouter } from "next/navigation";
@@ -19,8 +20,6 @@ import { useRouter } from "next/navigation";
 type RegisterEmail = string;
 
 type RegisterPassword = string;
-
-type User = any;
 
 export default function Home() {
   // useRouter:ユーザー登録（SignUP)が完了してログイン後、画面を遷移させるために使う
@@ -44,7 +43,7 @@ export default function Home() {
     }
   };
 
-  const [user, setUser] = useState<User>("");
+  const [user, setUser] = useState<User>();
 
   // ログインしているかどうかを判定する処理
   useEffect(() => {
