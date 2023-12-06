@@ -8,8 +8,11 @@ import {
   FormControl,
   Spacer,
 } from "@chakra-ui/react";
-import { useState, MouseEvent } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useState, useEffect, MouseEvent } from "react";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { auth } from "@/libs/firebase";
 import { useRouter } from "next/navigation";
 
@@ -28,17 +31,27 @@ export default function Home() {
   // SIGNUPボタンを押下しFirebaseに登録する処理
   const handleSignUp = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
-      .then((userCredentail) => {
-        const user = userCredentail.user;
-        console.log("user", user);
-        router.push("/top");
-      })
-      .catch((error) => {
-        alert("登録できません");
-        console.log(error);
-      });
+    try {
+      await createUserWithEmailAndPassword(
+        auth,
+        registerEmail,
+        registerPassword
+      );
+    } catch (error) {
+      alert("登録できません");
+    }
   };
+
+  const [user, setUser] = useState("");
+
+  // ログインしているかどうかを判定する処理
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      }
+    });
+  }, []);
 
   return (
     <>
