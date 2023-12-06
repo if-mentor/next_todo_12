@@ -30,7 +30,7 @@ export default function Home() {
     useState<RegisterPassword>("");
 
   // SIGNUPボタンを押下後、Firebaseに登録する処理
-  const handleSignUp = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleClickSignUp = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       await createUserWithEmailAndPassword(
@@ -56,9 +56,11 @@ export default function Home() {
 
   return (
     <>
+      {/*Signupできた場合、Topページに遷移  */}
       {user ? (
         router.push("/top")
       ) : (
+        // Signupできない場合は画面はそのままの処理
         <>
           <header>
             <Flex
@@ -150,7 +152,6 @@ export default function Home() {
                   h="54px"
                 >
                   <Button
-                    onClick={handleSignUp}
                     w="204px"
                     h="54px"
                     rounded="50"
@@ -160,6 +161,7 @@ export default function Home() {
                     borderColor="#000000"
                     fontSize="24px"
                     fontFamily="Gothic A1"
+                    onClick={handleClickSignUp}
                   >
                     SIGNUP
                   </Button>
