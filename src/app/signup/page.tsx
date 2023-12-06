@@ -20,6 +20,8 @@ type RegisterEmail = string;
 
 type RegisterPassword = string;
 
+type User = any;
+
 export default function Home() {
   // useRouter:ユーザー登録（SignUP)が完了してログイン後、画面を遷移させるために使う
   const router = useRouter();
@@ -28,7 +30,7 @@ export default function Home() {
   const [registerPassword, setRegisterPassword] =
     useState<RegisterPassword>("");
 
-  // SIGNUPボタンを押下しFirebaseに登録する処理
+  // SIGNUPボタンを押下後、Firebaseに登録する処理
   const handleSignUp = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
@@ -42,7 +44,7 @@ export default function Home() {
     }
   };
 
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState<User>("");
 
   // ログインしているかどうかを判定する処理
   useEffect(() => {
@@ -55,103 +57,119 @@ export default function Home() {
 
   return (
     <>
-      <header>
-        <Flex
-          pl="10%"
-          alignItems="center"
-          justifyContent="space-between"
-          bgColor="#68D391"
-          style={{ boxShadow: "0 1px 2px 1px rgb(0 0 0 / 25%)" }}
-        >
-          <Flex w="127px" h="56px" alignItems="center" justifyContent="center">
-            <Heading as="h1">TODO</Heading>
-          </Flex>
-        </Flex>
-      </header>
-
-      <main>
-        <Flex justifyContent="center" mt="80px">
-          <Flex
-            w="800px"
-            h="500px"
-            bgColor="#C6F6D5"
-            rounded="20"
-            alignItems="center"
-            justifyContent="space-between"
-            direction="column"
-            p="60px"
-          >
+      {user ? (
+        router.push("/top")
+      ) : (
+        <>
+          <header>
             <Flex
-              w="500px"
-              h="233px"
+              pl="10%"
               alignItems="center"
               justifyContent="space-between"
-              direction="column"
-              mt="20px"
+              bgColor="#68D391"
+              style={{ boxShadow: "0 1px 2px 1px rgb(0 0 0 / 25%)" }}
             >
-              <FormControl w="100%">
-                <FormLabel
-                  w="140px"
-                  h="23px"
-                  fontSize="20px"
-                  fontWeight="bold"
-                  fontFamily="Robot"
-                >
-                  メールアドレス
-                </FormLabel>
-                <Spacer h="4" />
-                <Input
-                  w="100%"
-                  h="60px"
-                  rounded="10"
-                  border="none"
-                  bgColor="#F0FFF4"
-                  value={registerEmail}
-                  onChange={(e) => setRegisterEmail(e.target.value)}
-                />
-              </FormControl>
-              <FormControl w="100%">
-                <FormLabel
-                  w="140px"
-                  h="23px"
-                  fontSize="20px"
-                  fontWeight="bold"
-                  fontFamily="Robot"
-                >
-                  パスワード
-                </FormLabel>
-                <Spacer h="4" />
-                <Input
-                  w="100%"
-                  h="60px"
-                  rounded="10"
-                  border="none"
-                  bgColor="#F0FFF4"
-                  value={registerPassword}
-                  onChange={(e) => setRegisterPassword(e.target.value)}
-                />
-              </FormControl>
-            </Flex>
-
-            <Flex alignItems="end" justifyContent="center" w="100%" h="54px">
-              <Button
-                onClick={handleSignUp}
-                w="204px"
-                h="54px"
-                rounded="50"
-                bgColor="#25855A"
-                color="#F0FFF4"
-                border="1px"
-                borderColor="#000000"
-                fontSize="24px"
-                fontFamily="Gothic A1"
+              <Flex
+                w="127px"
+                h="56px"
+                alignItems="center"
+                justifyContent="center"
               >
-                SIGNUP
-              </Button>
+                <Heading as="h1">TODO</Heading>
+              </Flex>
             </Flex>
-          </Flex>
-        </Flex>
-      </main>
+          </header>
+
+          <main>
+            <Flex justifyContent="center" mt="80px">
+              <Flex
+                w="800px"
+                h="500px"
+                bgColor="#C6F6D5"
+                rounded="20"
+                alignItems="center"
+                justifyContent="space-between"
+                direction="column"
+                p="60px"
+              >
+                <Flex
+                  w="500px"
+                  h="233px"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  direction="column"
+                  mt="20px"
+                >
+                  <FormControl w="100%">
+                    <FormLabel
+                      w="140px"
+                      h="23px"
+                      fontSize="20px"
+                      fontWeight="bold"
+                      fontFamily="Robot"
+                    >
+                      メールアドレス
+                    </FormLabel>
+                    <Spacer h="4" />
+                    <Input
+                      w="100%"
+                      h="60px"
+                      rounded="10"
+                      border="none"
+                      bgColor="#F0FFF4"
+                      value={registerEmail}
+                      onChange={(e) => setRegisterEmail(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormControl w="100%">
+                    <FormLabel
+                      w="140px"
+                      h="23px"
+                      fontSize="20px"
+                      fontWeight="bold"
+                      fontFamily="Robot"
+                    >
+                      パスワード
+                    </FormLabel>
+                    <Spacer h="4" />
+                    <Input
+                      w="100%"
+                      h="60px"
+                      rounded="10"
+                      border="none"
+                      bgColor="#F0FFF4"
+                      value={registerPassword}
+                      onChange={(e) => setRegisterPassword(e.target.value)}
+                    />
+                  </FormControl>
+                </Flex>
+
+                <Flex
+                  alignItems="end"
+                  justifyContent="center"
+                  w="100%"
+                  h="54px"
+                >
+                  <Button
+                    onClick={handleSignUp}
+                    w="204px"
+                    h="54px"
+                    rounded="50"
+                    bgColor="#25855A"
+                    color="#F0FFF4"
+                    border="1px"
+                    borderColor="#000000"
+                    fontSize="24px"
+                    fontFamily="Gothic A1"
+                  >
+                    SIGNUP
+                  </Button>
+                </Flex>
+              </Flex>
+            </Flex>
+          </main>
+        </>
+      )}
     </>
   );
 }
