@@ -24,15 +24,16 @@ import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import ReactPaginate from "react-paginate";
 import styles from "../../styles/top.module.css";
+import Logout from "../logout/page";
 
 type Todo = {
-  id: string,
-  title: string,
-  priority: string,
-  status: string,
-  created_at: string,
-  updated_at: string,
-}
+  id: string;
+  title: string;
+  priority: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
 
 const formatDate = (date: Date): string => {
   return (
@@ -114,15 +115,7 @@ export default function Top() {
           sx={{ fontWeight: "bold", px: "375" }}
         >
           TODO
-          <Button
-            color="#black"
-            fontWeight="bold"
-            w="120px"
-            h="56px"
-            fontSize="24px"
-          >
-            LOGOUT
-          </Button>
+          <Logout />
         </Box>
       </header>
       <nav>
@@ -266,7 +259,7 @@ export default function Top() {
               {currentItems.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
-                    <Link as={NextLink} href={'/show/' + task.id}>
+                    <Link as={NextLink} href={"/show/" + task.id}>
                       {task.title}
                     </Link>
                   </Td>

@@ -14,13 +14,14 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth } from "@/libs/firebase";
 import { User } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 
-export default function Home() {
+export default function Login() {
   // useRouter:ユーザー登録（SignUP)が完了してログイン後、画面を遷移させるために使う
   const router = useRouter();
   // useState:ローカルステート（ローカルの状態）に入力を保存
   const [loginEmail, setLoginEmail] = useState("");
-  const [LoginPassword, setLoginPassord] = useState("");
+  const [LoginPassword, setLoginPassword] = useState("");
 
   // LOGINボタンを押した時の処理
   const handleClickLogin = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -28,8 +29,12 @@ export default function Home() {
 
     try {
       await signInWithEmailAndPassword(auth, loginEmail, LoginPassword);
-    } catch (error) {
-      alert("メールアドレスまたはパスワードが間違っています");
+      router.push("/top");
+    } catch (e) {
+      if (e instanceof FirebaseError) {
+        alert("メールアドレスまたはパスワードが間違っています");
+        console.log(e);
+      }
     }
   };
 
@@ -45,121 +50,103 @@ export default function Home() {
 
   return (
     <>
-      {/* ログインしている場合、Top画面へ遷移 */}
-      {user ? (
-        router.push("/top")
-      ) : (
-        // ログインできなかった場合、画面はそのままの処理
-        <>
-          <header>
+      <header>
+        <Flex
+          pl="10%"
+          alignItems="center"
+          justifyContent="space-between"
+          bgColor="#68D391"
+          style={{ boxShadow: "0 1px 2px 1px rgb(0 0 0 / 25%)" }}
+        >
+          <Flex w="127px" h="56px" alignItems="center" justifyContent="center">
+            <Heading as="h1">TODO</Heading>
+          </Flex>
+        </Flex>
+      </header>
+
+      <main>
+        <Flex justifyContent="center" mt="80px">
+          <Flex
+            w="800px"
+            h="500px"
+            bgColor="#C6F6D5"
+            rounded="20"
+            alignItems="center"
+            justifyContent="space-between"
+            direction="column"
+            p="60px"
+          >
             <Flex
-              pl="10%"
+              w="500px"
+              h="233px"
               alignItems="center"
               justifyContent="space-between"
-              bgColor="#68D391"
-              style={{ boxShadow: "0 1px 2px 1px rgb(0 0 0 / 25%)" }}
+              direction="column"
+              mt="20px"
             >
-              <Flex
-                w="127px"
-                h="56px"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Heading as="h1">TODO</Heading>
-              </Flex>
-            </Flex>
-          </header>
-
-          <main>
-            <Flex justifyContent="center" mt="80px">
-              <Flex
-                w="800px"
-                h="500px"
-                bgColor="#C6F6D5"
-                rounded="20"
-                alignItems="center"
-                justifyContent="space-between"
-                direction="column"
-                p="60px"
-              >
-                <Flex
-                  w="500px"
-                  h="233px"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  direction="column"
-                  mt="20px"
+              <FormControl w="100%">
+                <FormLabel
+                  w="140px"
+                  h="23px"
+                  fontSize="20px"
+                  fontWeight="bold"
+                  fontFamily="Robot"
                 >
-                  <FormControl w="100%">
-                    <FormLabel
-                      w="140px"
-                      h="23px"
-                      fontSize="20px"
-                      fontWeight="bold"
-                      fontFamily="Robot"
-                    >
-                      メールアドレス
-                    </FormLabel>
-                    <Spacer h="4" />
-                    <Input
-                      w="100%"
-                      h="60px"
-                      rounded="10"
-                      border="none"
-                      bgColor="#F0FFF4"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormControl w="100%">
-                    <FormLabel
-                      w="140px"
-                      h="23px"
-                      fontSize="20px"
-                      fontWeight="bold"
-                      fontFamily="Robot"
-                    >
-                      パスワード
-                    </FormLabel>
-                    <Spacer h="4" />
-                    <Input
-                      w="100%"
-                      h="60px"
-                      rounded="10"
-                      border="none"
-                      bgColor="#F0FFF4"
-                      value={LoginPassword}
-                      onChange={(e) => setLoginPassord(e.target.value)}
-                    />
-                  </FormControl>
-                </Flex>
-
-                <Flex
-                  alignItems="end"
-                  justifyContent="center"
+                  メールアドレス
+                </FormLabel>
+                <Spacer h="4" />
+                <Input
                   w="100%"
-                  h="54px"
+                  h="60px"
+                  rounded="10"
+                  border="none"
+                  bgColor="#F0FFF4"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                />
+              </FormControl>
+              <FormControl w="100%">
+                <FormLabel
+                  w="140px"
+                  h="23px"
+                  fontSize="20px"
+                  fontWeight="bold"
+                  fontFamily="Robot"
                 >
-                  <Button
-                    onClick={handleClickLogin}
-                    w="204px"
-                    h="54px"
-                    rounded="50"
-                    bgColor="#25855A"
-                    color="#F0FFF4"
-                    border="1px"
-                    borderColor="#000000"
-                    fontSize="24px"
-                    fontFamily="Gothic A1"
-                  >
-                    LOGIN
-                  </Button>
-                </Flex>
-              </Flex>
+                  パスワード
+                </FormLabel>
+                <Spacer h="4" />
+                <Input
+                  w="100%"
+                  h="60px"
+                  rounded="10"
+                  border="none"
+                  bgColor="#F0FFF4"
+                  value={LoginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                />
+              </FormControl>
             </Flex>
-          </main>
-        </>
-      )}
+
+            <Flex alignItems="end" justifyContent="center" w="100%" h="54px">
+              <Button
+                onClick={handleClickLogin}
+                w="204px"
+                h="54px"
+                rounded="50"
+                bgColor="#25855A"
+                color="#F0FFF4"
+                border="1px"
+                borderColor="#000000"
+                fontSize="24px"
+                fontFamily="Gothic A1"
+              >
+                LOGIN
+              </Button>
+            </Flex>
+          </Flex>
+        </Flex>
+      </main>
     </>
   );
 }
