@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot } from "firebase/firestore";
+import { Timestamp, collection, onSnapshot } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -30,8 +30,8 @@ type Todo = {
   title: string,
   priority: string,
   status: string,
-  created_at: string,
-  updated_at: string,
+  created_at: Timestamp | string | Date,
+  updated_at: Timestamp | string | Date,
 }
 
 const formatDate = (date: Date): string => {
@@ -289,8 +289,8 @@ export default function Top() {
                       <option value="LOW">LOW</option>
                     </Select>
                   </Td>
-                  <Td fontWeight="bold">{task.created_at}</Td>
-                  <Td fontWeight="bold">{task.updated_at}</Td>
+                  <Td fontWeight="bold">{typeof task.created_at === 'string' ? task.created_at : null}</Td>
+                  <Td fontWeight="bold">{typeof task.updated_at === 'string' ? task.updated_at : null}</Td>
                   <Td>
                     <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
