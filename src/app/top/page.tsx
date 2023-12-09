@@ -33,13 +33,12 @@ type Todo = {
   updated_at: string,
 }
 
-
 const formatDate = (date: Date): string => {
   return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
 }
 
 export default function Top() {
-  const [taskList, setTaskList] = useState<Todo[]>([])
+  const [taskList, setTaskList] = useState<Todo[]>([]);
 
   useEffect(() => {
     const q = collection(db, 'todos')

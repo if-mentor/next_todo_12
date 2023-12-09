@@ -11,8 +11,42 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { db } from "@/libs/firebase";
+import { Timestamp, collection, addDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 const create = () => {
+  const router = useRouter();
+  const [todoTitle, setTodoTitle] = useState<string>("");
+  const [todoDetail, setTodoDetail] = useState<string>("");
+  const [selectPriority, setSelectPriority] = useState<string>("High");
+
+  // CREATEボタンが押されたら
+  const handleClickCreate = () => {
+    // もしtitleまたはdetailに何も入力されていなかったら
+    if (todoTitle === "" || todoDetail === "") return;
+    // Firebaseのデータベースにデータを追加する
+    const addDataRef = collection(db, "todos");
+    addDoc(addDataRef, {
+      id: uuidv4(),
+      title: todoTitle,
+      detail: todoDetail,
+      priority: selectPriority,
+      status: "NOT STARTED",
+      created_at: Timestamp.now(),
+      updated_at: Timestamp.now(),
+    });
+    setTodoTitle("");
+    setTodoDetail("");
+    setSelectPriority("High");
+    router.push("/top");
+  };
+  // BACKボタンが押されたら
+  const handleClickBack = () => {
+    router.push("/top");
+  };
+
   return (
     <Box as="main" w="1280px" mx="auto">
       <Flex as="header" h="80px" bg="#68D391" alignItems="center" px={5}>
@@ -47,6 +81,7 @@ const create = () => {
       <Flex mt={4} ml="100px">
         <Box ml="968px">
           <Button
+            onClick={() => handleClickBack()}
             w="112px"
             h="40px"
             bg="#68D391"
@@ -65,6 +100,10 @@ const create = () => {
           TITLE
         </Text>
         <Textarea
+          value={todoTitle}
+          onChange={(e) => {
+            setTodoTitle(e.target.value);
+          }}
           w="1080px"
           h="72px"
           size="lg"
@@ -82,6 +121,8 @@ const create = () => {
           DETAIL
         </Text>
         <Textarea
+          value={todoDetail}
+          onChange={(e) => setTodoDetail(e.target.value)}
           w="1080px"
           h="204px"
           size="lg"
@@ -98,7 +139,10 @@ const create = () => {
         <Text fontSize="24px" fontWeight="bold">
           PRIORITY
         </Text>
-        <RadioGroup defaultValue="High">
+        <RadioGroup
+          onChange={(e) => setSelectPriority(e)}
+          value={selectPriority}
+        >
           <Stack direction="row">
             <Radio value="High" fontWeight="bold" fontSize="24px" mr={4}>
               High
@@ -115,6 +159,7 @@ const create = () => {
       <Flex mt={4} ml="100px">
         <Box ml="968px">
           <Button
+            onClick={() => handleClickCreate()}
             w="112px"
             h="40px"
             bg="#25855A"
