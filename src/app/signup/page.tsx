@@ -18,17 +18,12 @@ import { auth } from "@/libs/firebase";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
 
-type RegisterEmail = string;
-
-type RegisterPassword = string;
-
 export default function Signup() {
   // useRouter:ユーザー登録（SignUP)が完了してログイン後、画面を遷移させるために使う
   const router = useRouter();
   // useState:ローカルステート（ローカルの状態）に入力を保存
-  const [registerEmail, setRegisterEmail] = useState<RegisterEmail>("");
-  const [registerPassword, setRegisterPassword] =
-    useState<RegisterPassword>("");
+  const [registerEmail, setRegisterEmail] = useState<string>("");
+  const [registerPassword, setRegisterPassword] = useState<string>("");
 
   // SIGNUPボタンを押下後、Firebaseに登録する処理
   const handleClickSignUp = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -40,15 +35,15 @@ export default function Signup() {
         registerPassword
       );
       router.push("/top");
-    } catch (e) {
-      if (e instanceof FirebaseError) {
+    } catch (error) {
+      if (error instanceof FirebaseError) {
         alert("登録できません");
         console.log(e);
       }
     }
   };
 
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | null>(null);
 
   // ログインしているかどうかを判定する処理
   useEffect(() => {

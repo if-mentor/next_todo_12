@@ -20,20 +20,20 @@ export default function Login() {
   // useRouter:ユーザー登録（SignUP)が完了してログイン後、画面を遷移させるために使う
   const router = useRouter();
   // useState:ローカルステート（ローカルの状態）に入力を保存
-  const [loginEmail, setLoginEmail] = useState("");
-  const [LoginPassword, setLoginPassword] = useState("");
+  const [loginEmail, setLoginEmail] = useState<string>("");
+  const [loginPassword, setLoginPassword] = useState<string>("");
 
   // LOGINボタンを押した時の処理
   const handleClickLogin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth, loginEmail, LoginPassword);
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       router.push("/top");
-    } catch (e) {
-      if (e instanceof FirebaseError) {
+    } catch (error) {
+      if (error instanceof FirebaseError) {
         alert("メールアドレスまたはパスワードが間違っています");
-        console.log(e);
+        console.log(error);
       }
     }
   };
@@ -122,7 +122,7 @@ export default function Login() {
                   rounded="10"
                   border="none"
                   bgColor="#F0FFF4"
-                  value={LoginPassword}
+                  value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                 />
               </FormControl>

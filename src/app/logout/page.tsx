@@ -13,9 +13,9 @@ export default function Logout() {
     try {
       await signOut(auth);
       router.push("/login");
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        console.log(e);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        console.log(error);
       }
     }
   };
