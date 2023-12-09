@@ -13,7 +13,7 @@ import { db } from "@/libs/firebase";
 // firebaseのcloud firestoreを使用し、データベースにアクセスするためのモジュールや関数をインポート
 import { Timestamp, collection, getDocs, doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 type Todo = {
     id: string,
@@ -32,20 +32,30 @@ type CommentType = {
     date: string;
 }
 
-const formatDate = (date: Date): string => {
-    return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
-  }
+// const formatDate = (date: Date): string => {
+//     return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
+//   }
 
 export default function Show() {
-    const docRef = doc(db, "todo_tasks", "task");
-    const dataGet = async () => {
-        const docSnap = await getDoc(docRef);
+    // URL末尾のidを取得
+    const searchParams = useParams();
+    const searchParamsId = searchParams.id;
 
-        if(docSnap.exists()) {
-            console.log(docSnap.data());
-        } else {
-            console.log("no!!");
-        }
+    const collectionRef = doc(db, "todos", searchParamsId);
+
+    // 各状態管理
+    const [title, setTitle] = useState("");
+    const [detail, setDetail] = useState("");
+    const [created, setCreated] = useState("");
+    const [updated, setUpdated] = useState("");
+
+    const dataGet = async () => {
+        const docSnap = await getDoc(collectionRef);
+        console.log(docSnap.data());
+        setTitle(docSnap.data().title);
+        setDetail(docSnap.data().detail);
+        // setCreated(formatDate(docSnap.data().created_at.seconds));
+        // setUpdated(formatDate(docSnap.data().updated_at.seconds));
     }
 
     useEffect(() => {
@@ -91,8 +101,9 @@ export default function Show() {
         const commentDate = `${year}/${month}/${day}`;
 
         // Firebaseコレクションとドキュメントの作成
-        const docRef = doc(collection(db, "comment_props"));
-        setDoc(doc(db, "todo_show_comment", docRef.id), {
+        // const docRef = doc(collection(db, "comment_props"));
+        const docRef = doc(collection(db, `comment${searchParamsId}`));
+        setDoc(doc(db, `comment${searchParamsId}`, docRef.id), {
             id: docRef.id,
             name: commentName,
             comment: commentComment,
@@ -111,9 +122,8 @@ export default function Show() {
 
     // コレクションの参照を取得する
     useEffect(() => {
-        const postData = collection(db, 'todo_show_comment');
         // onSnapshotにて、リアルタイムアップデートさせる
-        const unsub = onSnapshot(collection(db, 'todo_show_comment'), (querySnapshot) => {
+        const unsub = onSnapshot(collection(db, `comment${searchParamsId}`), (querySnapshot) => {
             const commentsData = querySnapshot.docs.map((doc) => doc.data() as CommentType);
             setData(commentsData);
         });
@@ -177,11 +187,11 @@ export default function Show() {
                     rounded="10">
                         <Box color="#333" fontWeight="bold" mb="2%">
                             <p style={{backgroundColor:"#68D391"}}>TITLE</p>
-                            <p>Github上に静的サイトをホスティングする</p>
+                            <p>{title}</p>
                         </Box>
                         <Box color="#333" fontWeight="bold" mb="2%">
                             <Box style={{backgroundColor:"#68D391"}}>DETAIL</Box>
-                            <p>AWS コンソールで AWS Amplify を使って静的ウェブサイトをホスティングします。AWS Amplify は、静的ウェブサイトおよびウェブアプリにフルマネージドのホスティングを提供します。Amplify のホスティングソリューションは、Amazon CloudFront と Amazon S3 を使って、AWS コンテンツ配信ネットワーク (CDN) を介してサイトアセットを提供します。<br />継続的デプロイをセットアップします。Amplify は、継続的デプロイで Git ベースのワークフローを提供します。それにより、コードコミットごとに、サイトに自動的に更新をデプロイすることができます。</p>
+                            <p>{detail}</p>
                         </Box>
                         <Flex justifyContent="space-between" fontWeight="bold">
                             <Button
@@ -193,8 +203,8 @@ export default function Show() {
                             fontSize="18px">
                                 <Flex gap="3%"><EditIcon /><p>Edit</p></Flex>
                             </Button>
-                            <p>Create<br />2023-01-01 00:00</p>
-                            <p>Update<br />2023-01-01 00:00</p>
+                            <p>Create<br />{created}</p>
+                            <p>Update<br />{updated}</p>
                         </Flex>
                     </Box>
                     <Box className="comment-wrapper" w="49%">
