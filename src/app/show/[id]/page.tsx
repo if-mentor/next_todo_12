@@ -15,16 +15,16 @@ import { Timestamp, collection, getDocs, doc, setDoc, getDoc, onSnapshot } from 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
+// 型定義
 type Todo = {
     id: string,
     title: string,
     detail: string,
     priority: string,
     status: string,
-    created_at: string,
-    updated_at: string,
+    created_at: Timestamp | string | Date,
+    updated_at: Timestamp | string | Date,
 }
-
 type CommentType = {
     id: number;
     name: string;
@@ -32,9 +32,18 @@ type CommentType = {
     date: string;
 }
 
-// const formatDate = (date: Date): string => {
-//     return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
-//   }
+// 日時フォーマット
+const formatDate = (date: Date): string => {
+    return date.getFullYear()
+    + '-'
+    + (1 + date.getMonth()).toString().padStart(2, '0')
+    + '-'
+    + date.getDate().toString().padStart(2, '0')
+    + ' '
+    + date.getHours().toString().padStart(2, '0')
+    + ':'
+    + date.getMinutes().toString().padStart(2, '0')
+  }
 
 export default function Show() {
     // URL末尾のidを取得
@@ -52,10 +61,24 @@ export default function Show() {
     const dataGet = async () => {
         const docSnap = await getDoc(collectionRef);
         console.log(docSnap.data());
+
+        // 日時変換用
+        const createdAt = docSnap.data().created_at.seconds
+        const createdDate = new Date(createdAt * 1000);
+        const createdYear = createdDate.getFullYear();
+        const createdMonth = (createdDate.getMonth() + 1).toString().padStart(2, '0');
+        const createdDay = createdDate.getDate().toString().padStart(2, '0');
+
+        const updatedAt = docSnap.data().updated_at.seconds
+        const updatedDate = new Date(updatedAt * 1000);
+        const updatedYear = updatedDate.getFullYear();
+        const updatedMonth = (updatedDate.getMonth() + 1).toString().padStart(2, '0');
+        const updatedDay = updatedDate.getDate().toString().padStart(2, '0');
+
         setTitle(docSnap.data().title);
         setDetail(docSnap.data().detail);
-        // setCreated(formatDate(docSnap.data().created_at.seconds));
-        // setUpdated(formatDate(docSnap.data().updated_at.seconds));
+        setCreated(`${createdYear}/${createdMonth}/${createdDay}`);
+        setUpdated(`${updatedYear}/${updatedMonth}/${updatedDay}`);
     }
 
     useEffect(() => {
@@ -92,12 +115,12 @@ export default function Show() {
         if(commentName === "" || commentComment === "") return;
 
         // 投稿日
-        const currentDate = new Date();
+        const currentDate: Date = new Date();
         // 年、月、日の取得
         const year = currentDate.getFullYear();
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
         const day = currentDate.getDate().toString().padStart(2, '0');
-
+        // コメント日時表記
         const commentDate = `${year}/${month}/${day}`;
 
         // Firebaseコレクションとドキュメントの作成

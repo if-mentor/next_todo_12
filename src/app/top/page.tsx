@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -96,6 +96,21 @@ export default function Top() {
       setTaskList(result);
     });
     return () => unsubscribe();
+  }, []);
+
+  // status,priorityの変更
+  const [options, setOptions] = useState<Todo[]>([]);
+  const [userSelectedOption, setUserSelectedOption] = useState<Todo | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "todos")); // 'yourCollection'は実際のコレクション名に置き換えてください
+
+      const data = querySnapshot.docs.map(doc => doc.data().priority); // 'yourField'は実際のデータフィールド名に置き換えてください
+      setOptions(data);
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -283,10 +298,18 @@ export default function Top() {
                     </Button>
                   </Td>
                   <Td>
-                    <Select border="1px solid" borderColor="tomato" w="112px">
-                      <option value="High">High</option>
+                    <Select
+                    border="1px solid"
+                    borderColor="tomato"
+                    w="112px"
+                    // value={userSelectedOption}
+                    // onChange={(e) => setUserSelectedOption(e.target.value)}
+                    >
+                      {/* 初期のoption */}
+                      <option value="High">{task.priority}</option>
+                      {/* <option value="High">High</option>
                       <option value="Middle">Middle</option>
-                      <option value="LOW">LOW</option>
+                      <option value="LOW">LOW</option> */}
                     </Select>
                   </Td>
                   <Td fontWeight="bold">{task.created_at}</Td>
