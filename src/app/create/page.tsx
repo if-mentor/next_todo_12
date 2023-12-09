@@ -15,7 +15,7 @@ import { db } from "@/libs/firebase";
 import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import Login from "../login/page";
+import Logout from "../logout/page";
 
 const create = () => {
   const router = useRouter();
@@ -64,7 +64,7 @@ const create = () => {
         </Box>
         <Spacer />
         <Box marginRight="50px">
-          <Login />
+          <Logout />
         </Box>
       </Flex>
 

@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Spacer, Text, Textarea } from "@chakra-ui/react";
-import Login from "../login/page";
+import Logout from "../logout/page";
 
 const edit = () => {
   return (
@@ -18,7 +18,7 @@ const edit = () => {
         </Box>
         <Spacer />
         <Box marginRight="50px">
-          <Login />
+          <Logout />
         </Box>
       </Flex>
 
