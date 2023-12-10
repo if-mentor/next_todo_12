@@ -11,7 +11,13 @@ import { EditIcon } from '@chakra-ui/icons';
 // firebaseとの連携の際に、db変数を取り込むため
 import { db } from "@/libs/firebase";
 // firebaseのcloud firestoreを使用し、データベースにアクセスするためのモジュールや関数をインポート
-import { Timestamp, collection, doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
+import { Timestamp,
+    collection,
+    doc,
+    setDoc,
+    getDoc,
+    onSnapshot
+    } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
