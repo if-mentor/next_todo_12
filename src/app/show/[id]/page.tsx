@@ -11,7 +11,7 @@ import { EditIcon } from '@chakra-ui/icons';
 // firebaseとの連携の際に、db変数を取り込むため
 import { db } from "@/libs/firebase";
 // firebaseのcloud firestoreを使用し、データベースにアクセスするためのモジュールや関数をインポート
-import { Timestamp, collection, getDocs, doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
+import { Timestamp, collection, doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
@@ -32,25 +32,11 @@ type CommentType = {
     date: string;
 }
 
-// 日時フォーマット
-const formatDate = (date: Date): string => {
-    return date.getFullYear()
-    + '-'
-    + (1 + date.getMonth()).toString().padStart(2, '0')
-    + '-'
-    + date.getDate().toString().padStart(2, '0')
-    + ' '
-    + date.getHours().toString().padStart(2, '0')
-    + ':'
-    + date.getMinutes().toString().padStart(2, '0')
-  }
-
 export default function Show() {
     // URL末尾のidを取得
     const searchParams = useParams();
     const searchParamsId = searchParams.id;
-
-    const collectionRef = doc(db, "todos", searchParamsId);
+    const collectionRef = doc(db, "todos", searchParamsId as string);
 
     // 各状態管理
     const [title, setTitle] = useState("");
@@ -60,25 +46,26 @@ export default function Show() {
 
     const dataGet = async () => {
         const docSnap = await getDoc(collectionRef);
-        console.log(docSnap.data());
 
-        // 日時変換用
-        const createdAt = docSnap.data().created_at.seconds
-        const createdDate = new Date(createdAt * 1000);
-        const createdYear = createdDate.getFullYear();
-        const createdMonth = (createdDate.getMonth() + 1).toString().padStart(2, '0');
-        const createdDay = createdDate.getDate().toString().padStart(2, '0');
+        if(docSnap.exists()) {
+            // 日時変換用
+            const createdAt = docSnap.data().created_at.seconds
+            const createdDate = new Date(createdAt * 1000);
+            const createdYear = createdDate.getFullYear();
+            const createdMonth = (createdDate.getMonth() + 1).toString().padStart(2, '0');
+            const createdDay = createdDate.getDate().toString().padStart(2, '0');
 
-        const updatedAt = docSnap.data().updated_at.seconds
-        const updatedDate = new Date(updatedAt * 1000);
-        const updatedYear = updatedDate.getFullYear();
-        const updatedMonth = (updatedDate.getMonth() + 1).toString().padStart(2, '0');
-        const updatedDay = updatedDate.getDate().toString().padStart(2, '0');
+            const updatedAt = docSnap.data().updated_at.seconds
+            const updatedDate = new Date(updatedAt * 1000);
+            const updatedYear = updatedDate.getFullYear();
+            const updatedMonth = (updatedDate.getMonth() + 1).toString().padStart(2, '0');
+            const updatedDay = updatedDate.getDate().toString().padStart(2, '0');
 
-        setTitle(docSnap.data().title);
-        setDetail(docSnap.data().detail);
-        setCreated(`${createdYear}/${createdMonth}/${createdDay}`);
-        setUpdated(`${updatedYear}/${updatedMonth}/${updatedDay}`);
+            setTitle(docSnap.data().title);
+            setDetail(docSnap.data().detail);
+            setCreated(`${createdYear}/${createdMonth}/${createdDay}`);
+            setUpdated(`${updatedYear}/${updatedMonth}/${updatedDay}`);
+        }
     }
 
     useEffect(() => {
@@ -124,7 +111,6 @@ export default function Show() {
         const commentDate = `${year}/${month}/${day}`;
 
         // Firebaseコレクションとドキュメントの作成
-        // const docRef = doc(collection(db, "comment_props"));
         const docRef = doc(collection(db, `comment${searchParamsId}`));
         setDoc(doc(db, `comment${searchParamsId}`, docRef.id), {
             id: docRef.id,
