@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { aggregateQuerySnapshotEqual, collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -99,19 +99,36 @@ export default function Top() {
   }, []);
 
   // status,priorityの変更
-  const [options, setOptions] = useState<Todo[]>([]);
-  const [userSelectedOption, setUserSelectedOption] = useState<Todo | undefined>(undefined);
+// const q = collection(db, "todos");
+// const unsubscribe = onSnapshot(q, (querySnapshot) => {
+//   const result = [];
+//   querySnapshot.docs.forEach((doc) => {
+//     const task = doc.data();
+//     result.push({
+//       priority: task.priority,
+//     });
+//   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, "todos")); // 'yourCollection'は実際のコレクション名に置き換えてください
+//   setTaskList(result);
+// })
 
-      const data = querySnapshot.docs.map(doc => doc.data().priority); // 'yourField'は実際のデータフィールド名に置き換えてください
-      setOptions(data);
-    };
+  // const [options, setOptions] = useState<Todo[]>([]);
+  // const [userSelectedOption, setUserSelectedOption] = useState<Todo | undefined>(undefined);
 
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const querySnapshot = await getDocs(collection(db, "todos")); // 'yourCollection'は実際のコレクション名に置き換えてください
+
+  //     const data = querySnapshot.docs.map(doc => doc.data().priority); // 'yourField'は実際のデータフィールド名に置き換えてください
+  //     setOptions(data);
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  // priorityの変更
+  // const [clickedTask, setClickedTask] = useState(null);
+  // const [isClicked, setIsClicked] = useState(false);
 
   return (
     <>
@@ -302,14 +319,13 @@ export default function Top() {
                     border="1px solid"
                     borderColor="tomato"
                     w="112px"
-                    // value={userSelectedOption}
-                    // onChange={(e) => setUserSelectedOption(e.target.value)}
+                    // ここでfirebase側の登録も変更したい
+                    onChange={() => console.log('変わったよ')}
                     >
-                      {/* 初期のoption */}
-                      <option value="High">{task.priority}</option>
-                      {/* <option value="High">High</option>
+                      <option value="" selected hidden>{task.priority}</option>
+                      <option value="High">High</option>
                       <option value="Middle">Middle</option>
-                      <option value="LOW">LOW</option> */}
+                      <option value="LOW">LOW</option>
                     </Select>
                   </Td>
                   <Td fontWeight="bold">{task.created_at}</Td>
