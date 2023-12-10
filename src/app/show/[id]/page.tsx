@@ -45,10 +45,10 @@ export default function Show() {
     const collectionRef = doc(db, "todos", searchParamsId as string);
 
     // 各状態管理
-    const [title, setTitle] = useState("");
-    const [detail, setDetail] = useState("");
-    const [created, setCreated] = useState("");
-    const [updated, setUpdated] = useState("");
+    const [title, setTitle] = useState<string>("");
+    const [detail, setDetail] = useState<string>("");
+    const [created, setCreated] = useState<string>("");
+    const [updated, setUpdated] = useState<string>("");
 
     const dataGet = async () => {
         const docSnap = await getDoc(collectionRef);
@@ -83,7 +83,7 @@ export default function Show() {
 
     // デフォルトではモーダルを閉じておく
     // モーダルの状態管理
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible);
     }
@@ -99,8 +99,8 @@ export default function Show() {
     }
 
     // モーダルにおけるNameとYour Commentの状態管理
-    const [commentName, setCommentName] = useState("");
-    const [commentComment, setCommentComment] = useState("");
+    const [commentName, setCommentName] = useState<string>("");
+    const [commentComment, setCommentComment] = useState<string>("");
 
     // モーダルにおけるCreateボタン押下処理
     const handleClickComment = () => {
