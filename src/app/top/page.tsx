@@ -18,9 +18,9 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot } from "firebase/firestore";
+import { QueryConstraint, collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/libs/firebase";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import NextLink from "next/link";
 import ReactPaginate from "react-paginate";
 import styles from "../../styles/top.module.css";
@@ -33,6 +33,10 @@ type Todo = {
   created_at: string,
   updated_at: string,
 }
+
+type Priority = HTMLSelectElement | null
+type Status = HTMLSelectElement | null
+type Search = HTMLInputElement | null
 
 const formatDate = (date: Date): string => {
   return (
@@ -74,9 +78,58 @@ export default function Top() {
     //全体のページ数を出す計算式（todoの数÷1ページに表示するtodoの数）小数点以下繰り上げ
     setPageCount(Math.ceil(taskList.length / itemsPerPage));
   }, [taskList, itemOffset]);
+  const [search, setSearch] = useState<string>('')
+  const [status, setStatus] = useState<string>('')
+  const [priority, setPriority] = useState<string>('')
+
+  const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+  }
+
+  const changeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+    setStatus(e.target.value)
+  }
+
+  const changePriority = (e: ChangeEvent<HTMLSelectElement>) => {
+    setPriority(e.target.value)
+  }
+
+  const clickReset = () => {
+    const priority: Priority = document.querySelector('[name="priority"]')
+    if (priority) {
+      priority.selectedIndex = 0
+    }
+    setPriority('')
+
+    const status: Status = document.querySelector('[name="status"]')
+    if (status) {
+      status.selectedIndex = 0
+    }
+    setStatus('')
+
+    const search: Search = document.querySelector('[name="search"]')
+    if (search) {
+      search.value = ''
+    }
+    setSearch('')
+  }
 
   useEffect(() => {
-    const q = collection(db, "todos");
+    const wheres: QueryConstraint[] = []
+    if (status) {
+      wheres.push(where('status', '==', status))
+      if (search) {
+        wheres.push(where('title', '==', search))
+      }
+    } else if (priority) {
+      wheres.push(where('priority', '==', priority))
+      if (search) {
+        wheres.push(where('title', '==', search))
+      }
+    }
+    const todosRef = collection(db, 'todos')
+    const q = query(todosRef, ...wheres)
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result: Todo[] = [];
       querySnapshot.docs.forEach((doc) => {
@@ -93,10 +146,9 @@ export default function Top() {
         });
       });
 
-      setTaskList(result);
-    });
-    return () => unsubscribe();
-  }, []);
+      setTaskList(result)
+    })
+  }, [search, status, priority])
 
   return (
     <>
@@ -146,6 +198,8 @@ export default function Top() {
                 border="1px solid"
                 my={2}
                 placeholder="Text"
+                name="search"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => changeSearch(e)}
               />
             </InputGroup>
           </Box>
@@ -157,6 +211,9 @@ export default function Top() {
               my={2}
               fontWeight="bold"
               border="1px solid"
+              name="status"
+              disabled={Boolean(priority)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => changeStatus(e)}
             >
               <option value="NOT STARTED">NOT STARTED</option>
               <option value="DOING">DOING</option>
@@ -171,6 +228,9 @@ export default function Top() {
               my={2}
               fontWeight="bold"
               border="1px solid"
+              name="priority"
+              disabled={Boolean(status)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => changePriority(e)}
             >
               <option value="High">High</option>
               <option value="Middle">Middle</option>
@@ -185,6 +245,7 @@ export default function Top() {
               bgColor="#A0AEC0"
               fontSize="18px"
               border="1px solid"
+              onClick={() => clickReset()}
             >
               RESET
             </Button>
