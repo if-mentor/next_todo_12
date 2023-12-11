@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { addDoc, aggregateQuerySnapshotEqual, collection, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
+import { addDoc, aggregateQuerySnapshotEqual, collection, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -99,66 +99,15 @@ export default function Top() {
   }, []);
 
   // status,priorityの変更
+  // データベース上の該当のドキュメントIDが分かっている場合
+  const updatePriority = async (documentId, selectedPriority) => {
+    const todoRef = doc(db, "todos", documentId);
 
-// データベース上の該当のドキュメントIDが分かっている場合
-// const updatePriority = async (documentId, newPriority) => {
-const updatePriority = async (documentId) => {
-  const todoRef = doc(db, "todos", documentId);
-
-  console.log(documentId);
-
-  // ドキュメントを取得
-  await updateDoc(todoRef, {
-    priority: "High"
-  });
-  // const docSnap = await getDoc(todoRef);
-
-  // if (docSnap.exists()) {
-  //   // ドキュメントが存在する場合、priorityを更新
-  //   await updateDoc(todoRef, {
-  //     priority: newPriority,
-  //     updated_at: Timestamp.now(),
-  //   });
-  // } else {
-  //   console.log("Document does not exist");
-  //   // ドキュメントが存在しない場合の処理
-  // }
-};
-
-// 使用例: documentId と newPriority を適切な値に置き換える
-// updatePriority("your_document_id", "NEW_PRIORITY");
-
-
-// const q = collection(db, "todos");
-// const unsubscribe = onSnapshot(q, (querySnapshot) => {
-//   const result = [];
-//   querySnapshot.docs.forEach((doc) => {
-//     const task = doc.data();
-//     result.push({
-//       priority: task.priority,
-//     });
-//   });
-
-//   setTaskList(result);
-// })
-
-  // const [options, setOptions] = useState<Todo[]>([]);
-  // const [userSelectedOption, setUserSelectedOption] = useState<Todo | undefined>(undefined);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const querySnapshot = await getDocs(collection(db, "todos")); // 'yourCollection'は実際のコレクション名に置き換えてください
-
-  //     const data = querySnapshot.docs.map(doc => doc.data().priority); // 'yourField'は実際のデータフィールド名に置き換えてください
-  //     setOptions(data);
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  // priorityの変更
-  // const [clickedTask, setClickedTask] = useState(null);
-  // const [isClicked, setIsClicked] = useState(false);
+    // updateDocを用い、データベースの一部を書き換え
+    await updateDoc(todoRef, {
+      priority: selectedPriority,
+    });
+  };
 
   return (
     <>
@@ -349,9 +298,10 @@ const updatePriority = async (documentId) => {
                     border="1px solid"
                     borderColor="tomato"
                     w="112px"
-                    // ここでfirebase側の登録も変更させる
-                    onChange={() => updatePriority(task.id)}
+                    // ここでfirebase側の登録変更させる
+                    onChange={(e) => updatePriority(task.id, e.target.value)}
                     >
+                      {/* デフォルトはFirebaseに登録されているもの */}
                       <option value="" selected hidden>{task.priority}</option>
                       <option value="High">High</option>
                       <option value="Middle">Middle</option>
