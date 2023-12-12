@@ -22,15 +22,17 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
 // 型定義
-type Todo = {
-    id: string,
-    title: string,
-    detail: string,
-    priority: string,
-    status: string,
-    created_at: Timestamp | string | Date,
-    updated_at: Timestamp | string | Date,
-}
+// type Todo = {
+//     id: string,
+//     title: string,
+//     detail: string,
+//     priority: string,
+//     status: string,
+//     created_at: Timestamp | string | Date,
+//     updated_at: Timestamp | string | Date,
+// }
+type CreatedType = 'Timestamp' | 'string' | 'Date';
+type UpdatedType = 'Timestamp' | 'string' | 'Date';
 type CommentType = {
     id: number;
     name: string;
@@ -47,8 +49,8 @@ export default function Show() {
     // 各状態管理
     const [title, setTitle] = useState<string>("");
     const [detail, setDetail] = useState<string>("");
-    const [created, setCreated] = useState<string>("");
-    const [updated, setUpdated] = useState<string>("");
+    const [created, setCreated] = useState<CreatedType | null>(null);
+    const [updated, setUpdated] = useState<UpdatedType | null>(null);
 
     const dataGet = async () => {
         const docSnap = await getDoc(collectionRef);
