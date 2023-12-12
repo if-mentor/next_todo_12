@@ -34,6 +34,10 @@ type Todo = {
   updated_at: string,
 }
 
+type documentId = string;
+type Priority = string;
+type Status = string;
+
 const formatDate = (date: Date): string => {
   return (
     date.getFullYear() +
@@ -98,9 +102,9 @@ export default function Top() {
     return () => unsubscribe();
   }, []);
 
-  // status,priorityの変更
+  // priorityの変更
   // データベース上の該当のドキュメントIDが分かっている場合
-  const updatePriority = async (documentId, selectedPriority) => {
+  const updatePriority = async (documentId: documentId, selectedPriority: Priority) => {
     const todoRef = doc(db, "todos", documentId);
 
     // updateDocを用い、データベースの一部を書き換え
@@ -108,6 +112,28 @@ export default function Top() {
       priority: selectedPriority,
     });
   };
+
+  // statusの変更
+  const updateStatus = async (documentId: documentId, selectedStatus: Status) => {
+    const todoRef = doc(db, "todos", documentId);
+
+    if(selectedStatus === "NOT STARTED") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "DOING",
+      });
+    } else if(selectedStatus === "DOING") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "DONE",
+      });
+    } else if(selectedStatus === "DONE") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "NOT STARTED",
+      });
+  }
+}
 
   return (
     <>
@@ -289,8 +315,9 @@ export default function Top() {
                       border="1px solid"
                       borderRadius="30"
                       bgColor="#C6F6D5"
+                      onClick={() => updateStatus(task.id, task.status)}
                     >
-                      NOT STARTED
+                      {task.status}
                     </Button>
                   </Td>
                   <Td>
@@ -298,11 +325,10 @@ export default function Top() {
                     border="1px solid"
                     borderColor="tomato"
                     w="112px"
-                    // ここでfirebase側の登録変更させる
+                    value={task.priority}
                     onChange={(e) => updatePriority(task.id, e.target.value)}
                     >
                       {/* デフォルトはFirebaseに登録されているもの */}
-                      <option value="" selected hidden>{task.priority}</option>
                       <option value="High">High</option>
                       <option value="Middle">Middle</option>
                       <option value="LOW">LOW</option>
