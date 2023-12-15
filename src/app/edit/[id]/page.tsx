@@ -9,16 +9,19 @@ type Task = {
   id: string;
   title:string;
   detail:string;
-  created_at: string;
-  updated_at: string;
+  created_at: Timestamp | string | Date;
+  updated_at: Timestamp | string | Date;
 };
 
 const Edit = ({ params }: { params: { id: string } }) => {
-
   const [task, setTask] = useState<Task | null>(null);
   const router = useRouter();
 
   const paramId = params.id;
+
+  const formatDate = (date: Date): string => {
+    return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
+  }
 
    // Firestoreからタスクデータを取得
    const fetchTask = async (taskId: string) => {
@@ -27,12 +30,16 @@ const Edit = ({ params }: { params: { id: string } }) => {
       const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const data = docSnap.data() as Task;
+      const data = docSnap.data();
+      const createdAt = new Date(data.created_at.seconds * 1000)
+      const updatedAt = new Date(data.updated_at.seconds * 1000)
       setTask({
         ...data,
+        title:data.title,
+        detail:data.detail,
         id: docSnap.id,
-        created_at: data.created_at, // 既に文字列として保存されている場合
-        updated_at: data.updated_at  // 既に文字列として保存されている場合
+        created_at: formatDate(createdAt),
+        updated_at: formatDate(updatedAt)
       });
           } else {
             console.log("タスクが存在しません");
@@ -49,28 +56,38 @@ const Edit = ({ params }: { params: { id: string } }) => {
       }
     }, [paramId]);
 
-  console.log(paramId)
-  console.log(task);
+      console.log(paramId)
+      console.log(task);
 
-  // タスク更新処理
-  const handleUpdate = async () => {
-    if (!task) return;
+      // タスク更新処理
+    const handleUpdate = async () => {
+      if (!task) return;
 
-    try {
-      const docRef = doc(db, 'todos', task.id);
-      await updateDoc(docRef, {
-        title: task.title,
-        detail: task.detail,
-        created_at: Timestamp.fromDate(new Date(task.created_at)),
-        updated_at: Timestamp.fromDate(new Date())
-      });
+      try {
+        const docRef = doc(db, 'todos', task.id);
 
-      router.push('/top'); // Topページに戻る
-    } catch (error) {
-      console.error("タスクの更新中にエラーが発生:", error);
-      // ここでエラー通知を表示する
-    }
-  };
+        // 日付フィールドの処理
+        let created_at = task.created_at;
+        let updated_at = new Date(); // 現在の日時
+
+        // created_atがTimestamp型の場合、Dateに変換
+        if (created_at instanceof Timestamp) {
+          created_at = created_at.toDate();
+        }
+
+        await updateDoc(docRef, {
+          title: task.title,
+          detail: task.detail,
+          created_at: Timestamp.fromDate(new Date(created_at)),
+          updated_at: Timestamp.fromDate(updated_at)
+        });
+
+        router.push('/top'); // Topページに戻る
+        console.log("topページへ遷移")
+      } catch (error) {
+        console.error("タスクの更新中にエラーが発生:", error);
+      }
+    };
 
     // タスクデータの変更をハンドル
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>, field: keyof Task) => {
@@ -163,11 +180,11 @@ const Edit = ({ params }: { params: { id: string } }) => {
             <Flex>
               <Box mr={5}>
                 <Text fontWeight="bold">Create</Text>
-                <Text fontWeight="bold">{task?.created_at}</Text>
+                <Text fontWeight="bold">{task?.created_at as string}</Text>
               </Box>
               <Box>
                 <Text fontWeight="bold">Update</Text>
-                <Text fontWeight="bold">{task?.updated_at}</Text>
+                <Text fontWeight="bold">{task?.updated_at as string}</Text>
               </Box>
             </Flex>
 
