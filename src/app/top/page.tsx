@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { QueryConstraint, collection, onSnapshot, query, where } from "firebase/firestore";
+import { QueryConstraint, collection, onSnapshot, query, where, addDoc, aggregateQuerySnapshotEqual, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { ChangeEvent, useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -34,6 +34,9 @@ type Todo = {
   updated_at: string,
 }
 
+type documentId = string;
+type PriorityState = string;
+type StatusState = string;
 type Priority = HTMLSelectElement | null
 type Status = HTMLSelectElement | null
 type Search = HTMLInputElement | null
@@ -149,6 +152,39 @@ export default function Top() {
       setTaskList(result)
     })
   }, [search, status, priority])
+
+  // priorityの変更
+  // データベース上の該当のドキュメントIDが分かっている場合
+  const updatePriority = async (documentId: documentId, selectedPriority: PriorityState) => {
+    const todoRef = doc(db, "todos", documentId);
+
+    // updateDocを用い、データベースの一部を書き換え
+    await updateDoc(todoRef, {
+      priority: selectedPriority,
+    });
+  };
+
+  // statusの変更
+  const updateStatus = async (documentId: documentId, selectedStatus: StatusState) => {
+    const todoRef = doc(db, "todos", documentId);
+
+    if(selectedStatus === "NOT STARTED") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "DOING",
+      });
+    } else if(selectedStatus === "DOING") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "DONE",
+      });
+    } else if(selectedStatus === "DONE") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "NOT STARTED",
+      });
+  }
+}
 
   return (
     <>
@@ -339,12 +375,20 @@ export default function Top() {
                       border="1px solid"
                       borderRadius="30"
                       bgColor="#C6F6D5"
+                      onClick={() => updateStatus(task.id, task.status)}
                     >
-                      NOT STARTED
+                      {task.status}
                     </Button>
                   </Td>
                   <Td>
-                    <Select border="1px solid" borderColor="tomato" w="112px">
+                    <Select
+                    border="1px solid"
+                    borderColor="tomato"
+                    w="112px"
+                    value={task.priority}
+                    onChange={(e) => updatePriority(task.id, e.target.value)}
+                    >
+                      {/* デフォルトはFirebaseに登録されているもの */}
                       <option value="High">High</option>
                       <option value="Middle">Middle</option>
                       <option value="LOW">LOW</option>
