@@ -22,6 +22,8 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
 // 型定義
+type createdType = Timestamp | string;
+type updatedType = Timestamp | string | Date;
 type CommentType = {
     id: number;
     name: string;
@@ -38,8 +40,8 @@ export default function Show() {
     // 各状態管理
     const [title, setTitle] = useState<string>("");
     const [detail, setDetail] = useState<string>("");
-    const [created, setCreated] = useState<string | null>(null);
-    const [updated, setUpdated] = useState<string | null>(null);
+    const [created, setCreated] = useState<Timestamp | string>("");
+    const [updated, setUpdated] = useState<updatedType>("");
 
     const dataGet = async () => {
         const docSnap = await getDoc(collectionRef);
