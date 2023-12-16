@@ -18,7 +18,14 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { QueryConstraint, collection, onSnapshot, query, where } from "firebase/firestore";
+import {
+  QueryConstraint,
+  Timestamp,
+  collection,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { ChangeEvent, useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -31,13 +38,13 @@ type Todo = {
   title: string;
   priority: string;
   status: string;
-  created_at: string;
-  updated_at: string;
+  created_at: Timestamp | string | Date;
+  updated_at: Timestamp | string | Date;
 };
 
-type Priority = HTMLSelectElement | null
-type Status = HTMLSelectElement | null
-type Search = HTMLInputElement | null
+type Priority = HTMLSelectElement | null;
+type Status = HTMLSelectElement | null;
+type Search = HTMLInputElement | null;
 
 const formatDate = (date: Date): string => {
   return (
@@ -79,57 +86,57 @@ export default function Top() {
     //全体のページ数を出す計算式（todoの数÷1ページに表示するtodoの数）小数点以下繰り上げ
     setPageCount(Math.ceil(taskList.length / itemsPerPage));
   }, [taskList, itemOffset]);
-  const [search, setSearch] = useState<string>('')
-  const [status, setStatus] = useState<string>('')
-  const [priority, setPriority] = useState<string>('')
+  const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [priority, setPriority] = useState<string>("");
 
   const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
-  }
+    setSearch(e.target.value);
+  };
 
   const changeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value)
-  }
+    setStatus(e.target.value);
+  };
 
   const changePriority = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPriority(e.target.value)
-  }
+    setPriority(e.target.value);
+  };
 
   const clickReset = () => {
-    const priority: Priority = document.querySelector('[name="priority"]')
+    const priority: Priority = document.querySelector('[name="priority"]');
     if (priority) {
-      priority.selectedIndex = 0
+      priority.selectedIndex = 0;
     }
-    setPriority('')
+    setPriority("");
 
-    const status: Status = document.querySelector('[name="status"]')
+    const status: Status = document.querySelector('[name="status"]');
     if (status) {
-      status.selectedIndex = 0
+      status.selectedIndex = 0;
     }
-    setStatus('')
+    setStatus("");
 
-    const search: Search = document.querySelector('[name="search"]')
+    const search: Search = document.querySelector('[name="search"]');
     if (search) {
-      search.value = ''
+      search.value = "";
     }
-    setSearch('')
-  }
+    setSearch("");
+  };
 
   useEffect(() => {
-    const wheres: QueryConstraint[] = []
+    const wheres: QueryConstraint[] = [];
     if (status) {
-      wheres.push(where('status', '==', status))
+      wheres.push(where("status", "==", status));
       if (search) {
-        wheres.push(where('title', '==', search))
+        wheres.push(where("title", "==", search));
       }
     } else if (priority) {
-      wheres.push(where('priority', '==', priority))
+      wheres.push(where("priority", "==", priority));
       if (search) {
-        wheres.push(where('title', '==', search))
+        wheres.push(where("title", "==", search));
       }
     }
-    const todosRef = collection(db, 'todos')
-    const q = query(todosRef, ...wheres)
+    const todosRef = collection(db, "todos");
+    const q = query(todosRef, ...wheres);
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result: Todo[] = [];
@@ -147,9 +154,9 @@ export default function Top() {
         });
       });
 
-      setTaskList(result)
-    })
-  }, [search, status, priority])
+      setTaskList(result);
+    });
+  }, [search, status, priority]);
 
   return (
     <>
@@ -223,7 +230,9 @@ export default function Top() {
               border="1px solid"
               name="priority"
               disabled={Boolean(status)}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => changePriority(e)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                changePriority(e)
+              }
             >
               <option value="High">High</option>
               <option value="Middle">Middle</option>
@@ -343,8 +352,16 @@ export default function Top() {
                       <option value="LOW">LOW</option>
                     </Select>
                   </Td>
-                  <Td fontWeight="bold">{task.created_at}</Td>
-                  <Td fontWeight="bold">{task.updated_at}</Td>
+                  <Td fontWeight="bold">
+                    {typeof task.created_at === "string"
+                      ? task.created_at
+                      : null}
+                  </Td>
+                  <Td fontWeight="bold">
+                    {typeof task.updated_at === "string"
+                      ? task.updated_at
+                      : null}
+                  </Td>
                   <Td>
                     <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
