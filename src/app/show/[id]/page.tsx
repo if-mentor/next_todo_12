@@ -22,7 +22,14 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
 // 型定義
-type createdType = Timestamp | string;
+type Task = {
+    id: string;
+    title:string;
+    detail:string;
+    created_at: Timestamp | string | Date;
+    updated_at: Timestamp | string | Date;
+  };
+type createdType = Timestamp | string | Date;
 type updatedType = Timestamp | string | Date;
 type CommentType = {
     id: number;
@@ -40,8 +47,9 @@ export default function Show() {
     // 各状態管理
     const [title, setTitle] = useState<string>("");
     const [detail, setDetail] = useState<string>("");
-    const [created, setCreated] = useState<Timestamp | string>("");
+    const [created, setCreated] = useState<createdType>("");
     const [updated, setUpdated] = useState<updatedType>("");
+    const [task, setTask] = useState<Task | null>(null);
 
     const dataGet = async () => {
         const docSnap = await getDoc(collectionRef);
@@ -64,6 +72,16 @@ export default function Show() {
             setDetail(docSnap.data().detail);
             setCreated(`${createdYear}/${createdMonth}/${createdDay}`);
             setUpdated(`${updatedYear}/${updatedMonth}/${updatedDay}`);
+
+            // const formatDate = (date: Date): string => {
+            //     return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
+            // }
+            // const data = docSnap.data();
+            // setTask({
+            //     ...data,
+            //     created_at: `${createdYear}/${createdMonth}/${createdDay}`,
+            //     updated_at: formatDate(updatedAt)
+            //   });
         }
     }
 
@@ -211,8 +229,8 @@ export default function Show() {
                             fontSize="18px">
                                 <Flex gap="3%"><EditIcon /><p>Edit</p></Flex>
                             </Button>
-                            <p>Create<br />{created}</p>
-                            <p>Update<br />{updated}</p>
+                            <p>Create<br />{created as string}</p>
+                            <p>Update<br />{updated as string}</p>
                         </Flex>
                     </Box>
                     <Box className="comment-wrapper" w="49%">
