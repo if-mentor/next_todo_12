@@ -16,7 +16,7 @@ import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
-const create = () => {
+const Create = () => {
   const router = useRouter();
   const [todoTitle, setTodoTitle] = useState<string>("");
   const [todoDetail, setTodoDetail] = useState<string>("");
@@ -177,4 +177,4 @@ const create = () => {
   );
 };
 
-export default create;
+export default Create;
