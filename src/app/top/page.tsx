@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { QueryConstraint, collection, onSnapshot, query, where, addDoc, aggregateQuerySnapshotEqual, doc, getDocs, updateDoc } from "firebase/firestore";
+import { QueryConstraint, Timestamp, collection, onSnapshot, query, where, addDoc, aggregateQuerySnapshotEqual, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { ChangeEvent, useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -30,8 +30,8 @@ type Todo = {
   title: string,
   priority: string,
   status: string,
-  created_at: string,
-  updated_at: string,
+  created_at: Timestamp | string | Date,
+  updated_at: Timestamp | string | Date,
 }
 
 type documentId = string;
@@ -168,23 +168,23 @@ export default function Top() {
   const updateStatus = async (documentId: documentId, selectedStatus: StatusState) => {
     const todoRef = doc(db, "todos", documentId);
 
-    if(selectedStatus === "NOT STARTED") {
+    if (selectedStatus === "NOT STARTED") {
       // updateDocを用い、データベースの一部を書き換え
       await updateDoc(todoRef, {
         status: "DOING",
       });
-    } else if(selectedStatus === "DOING") {
+    } else if (selectedStatus === "DOING") {
       // updateDocを用い、データベースの一部を書き換え
       await updateDoc(todoRef, {
         status: "DONE",
       });
-    } else if(selectedStatus === "DONE") {
+    } else if (selectedStatus === "DONE") {
       // updateDocを用い、データベースの一部を書き換え
       await updateDoc(todoRef, {
         status: "NOT STARTED",
       });
+    }
   }
-}
 
   return (
     <>
@@ -382,11 +382,11 @@ export default function Top() {
                   </Td>
                   <Td>
                     <Select
-                    border="1px solid"
-                    borderColor="tomato"
-                    w="112px"
-                    value={task.priority}
-                    onChange={(e) => updatePriority(task.id, e.target.value)}
+                      border="1px solid"
+                      borderColor="tomato"
+                      w="112px"
+                      value={task.priority}
+                      onChange={(e) => updatePriority(task.id, e.target.value)}
                     >
                       {/* デフォルトはFirebaseに登録されているもの */}
                       <option value="High">High</option>
@@ -394,8 +394,8 @@ export default function Top() {
                       <option value="LOW">LOW</option>
                     </Select>
                   </Td>
-                  <Td fontWeight="bold">{task.created_at}</Td>
-                  <Td fontWeight="bold">{task.updated_at}</Td>
+                  <Td fontWeight="bold">{typeof task.created_at === 'string' ? task.created_at : null}</Td>
+                  <Td fontWeight="bold">{typeof task.updated_at === 'string' ? task.updated_at : null}</Td>
                   <Td>
                     <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
