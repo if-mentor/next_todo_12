@@ -49,7 +49,6 @@ export default function Show() {
     const [detail, setDetail] = useState<string>("");
     const [created, setCreated] = useState<createdType>("");
     const [updated, setUpdated] = useState<updatedType>("");
-    const [task, setTask] = useState<Task | null>(null);
 
     const dataGet = async () => {
         const docSnap = await getDoc(collectionRef);
