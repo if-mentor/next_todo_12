@@ -18,28 +18,41 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { QueryConstraint, Timestamp, collection, onSnapshot, query, where, addDoc, aggregateQuerySnapshotEqual, doc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  QueryConstraint,
+  Timestamp,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  addDoc,
+  aggregateQuerySnapshotEqual,
+  doc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { ChangeEvent, useEffect, useState } from "react";
 import NextLink from "next/link";
 import ReactPaginate from "react-paginate";
 import styles from "../../styles/top.module.css";
+import Logout from "../logout/page";
 
 type Todo = {
-  id: string,
-  title: string,
-  priority: string,
-  status: string,
-  created_at: Timestamp | string | Date,
-  updated_at: Timestamp | string | Date,
-}
+  id: string;
+  title: string;
+  priority: string;
+  status: string;
+  created_at: Timestamp | string | Date;
+  updated_at: Timestamp | string | Date;
+};
 
 type documentId = string;
 type PriorityState = string;
 type StatusState = string;
-type Priority = HTMLSelectElement | null
-type Status = HTMLSelectElement | null
-type Search = HTMLInputElement | null
+type Priority = HTMLSelectElement | null;
+type Status = HTMLSelectElement | null;
+type Search = HTMLInputElement | null;
 
 const formatDate = (date: Date): string => {
   return (
@@ -81,57 +94,57 @@ export default function Top() {
     //全体のページ数を出す計算式（todoの数÷1ページに表示するtodoの数）小数点以下繰り上げ
     setPageCount(Math.ceil(taskList.length / itemsPerPage));
   }, [taskList, itemOffset]);
-  const [search, setSearch] = useState<string>('')
-  const [status, setStatus] = useState<string>('')
-  const [priority, setPriority] = useState<string>('')
+  const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [priority, setPriority] = useState<string>("");
 
   const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
-  }
+    setSearch(e.target.value);
+  };
 
   const changeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value)
-  }
+    setStatus(e.target.value);
+  };
 
   const changePriority = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPriority(e.target.value)
-  }
+    setPriority(e.target.value);
+  };
 
   const clickReset = () => {
-    const priority: Priority = document.querySelector('[name="priority"]')
+    const priority: Priority = document.querySelector('[name="priority"]');
     if (priority) {
-      priority.selectedIndex = 0
+      priority.selectedIndex = 0;
     }
-    setPriority('')
+    setPriority("");
 
-    const status: Status = document.querySelector('[name="status"]')
+    const status: Status = document.querySelector('[name="status"]');
     if (status) {
-      status.selectedIndex = 0
+      status.selectedIndex = 0;
     }
-    setStatus('')
+    setStatus("");
 
-    const search: Search = document.querySelector('[name="search"]')
+    const search: Search = document.querySelector('[name="search"]');
     if (search) {
-      search.value = ''
+      search.value = "";
     }
-    setSearch('')
-  }
+    setSearch("");
+  };
 
   useEffect(() => {
-    const wheres: QueryConstraint[] = []
+    const wheres: QueryConstraint[] = [];
     if (status) {
-      wheres.push(where('status', '==', status))
+      wheres.push(where("status", "==", status));
       if (search) {
-        wheres.push(where('title', '==', search))
+        wheres.push(where("title", "==", search));
       }
     } else if (priority) {
-      wheres.push(where('priority', '==', priority))
+      wheres.push(where("priority", "==", priority));
       if (search) {
-        wheres.push(where('title', '==', search))
+        wheres.push(where("title", "==", search));
       }
     }
-    const todosRef = collection(db, 'todos')
-    const q = query(todosRef, ...wheres)
+    const todosRef = collection(db, "todos");
+    const q = query(todosRef, ...wheres);
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const result: Todo[] = [];
@@ -149,13 +162,16 @@ export default function Top() {
         });
       });
 
-      setTaskList(result)
-    })
-  }, [search, status, priority])
+      setTaskList(result);
+    });
+  }, [search, status, priority]);
 
   // priorityの変更
   // データベース上の該当のドキュメントIDが分かっている場合
-  const updatePriority = async (documentId: documentId, selectedPriority: PriorityState) => {
+  const updatePriority = async (
+    documentId: documentId,
+    selectedPriority: PriorityState
+  ) => {
     const todoRef = doc(db, "todos", documentId);
 
     // updateDocを用い、データベースの一部を書き換え
@@ -165,7 +181,10 @@ export default function Top() {
   };
 
   // statusの変更
-  const updateStatus = async (documentId: documentId, selectedStatus: StatusState) => {
+  const updateStatus = async (
+    documentId: documentId,
+    selectedStatus: StatusState
+  ) => {
     const todoRef = doc(db, "todos", documentId);
 
     if (selectedStatus === "NOT STARTED") {
@@ -184,7 +203,7 @@ export default function Top() {
         status: "NOT STARTED",
       });
     }
-  }
+  };
 
   return (
     <>
@@ -202,15 +221,7 @@ export default function Top() {
           sx={{ fontWeight: "bold", px: "375" }}
         >
           TODO
-          <Button
-            color="#black"
-            fontWeight="bold"
-            w="120px"
-            h="56px"
-            fontSize="24px"
-          >
-            LOGOUT
-          </Button>
+          <Logout />
         </Box>
       </header>
       <nav>
@@ -266,7 +277,9 @@ export default function Top() {
               border="1px solid"
               name="priority"
               disabled={Boolean(status)}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => changePriority(e)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                changePriority(e)
+              }
             >
               <option value="High">High</option>
               <option value="Middle">Middle</option>
@@ -363,7 +376,7 @@ export default function Top() {
               {currentItems.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
-                    <Link as={NextLink} href={'/show/' + task.id}>
+                    <Link as={NextLink} href={"/show/" + task.id}>
                       {task.title}
                     </Link>
                   </Td>
@@ -394,8 +407,16 @@ export default function Top() {
                       <option value="LOW">LOW</option>
                     </Select>
                   </Td>
-                  <Td fontWeight="bold">{typeof task.created_at === 'string' ? task.created_at : null}</Td>
-                  <Td fontWeight="bold">{typeof task.updated_at === 'string' ? task.updated_at : null}</Td>
+                  <Td fontWeight="bold">
+                    {typeof task.created_at === "string"
+                      ? task.created_at
+                      : null}
+                  </Td>
+                  <Td fontWeight="bold">
+                    {typeof task.updated_at === "string"
+                      ? task.updated_at
+                      : null}
+                  </Td>
                   <Td>
                     <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
