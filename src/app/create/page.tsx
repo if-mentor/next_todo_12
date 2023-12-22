@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Box,
   Button,
@@ -8,13 +9,14 @@ import {
   Spacer,
   Stack,
   Text,
-  Textarea,
+  Textarea
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { db } from "@/libs/firebase";
 import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
+import Logout from "../logout/page";
 
 const create = () => {
   const router = useRouter();
@@ -63,18 +65,7 @@ const create = () => {
         </Box>
         <Spacer />
         <Box marginRight="50px">
-          <Button
-            w="120px"
-            h="56px"
-            bg="#D9D9D9"
-            borderWidth="1px"
-            borderRadius="10px"
-            cursor="pointer"
-            fontSize="24px"
-            fontWeight="bold"
-          >
-            LOGOUT
-          </Button>
+          <Logout />
         </Box>
       </Flex>
 

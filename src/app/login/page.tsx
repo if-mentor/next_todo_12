@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Heading,
   Flex,
@@ -9,43 +10,36 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { useState, useEffect, MouseEvent } from "react";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  User,
-} from "firebase/auth";
-import { auth } from "@/libs/firebase";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { auth } from "@/libs/firebase";
+import { User } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 
-export default function Signup() {
+export default function Login() {
   // useRouter:ユーザー登録（SignUP)が完了してログイン後、画面を遷移させるために使う
   const router = useRouter();
   // useState:ローカルステート（ローカルの状態）に入力を保存
-  const [registerEmail, setRegisterEmail] = useState<string>("");
-  const [registerPassword, setRegisterPassword] = useState<string>("");
+  const [loginEmail, setLoginEmail] = useState<string>("");
+  const [loginPassword, setLoginPassword] = useState<string>("");
 
-  // SIGNUPボタンを押下後、Firebaseに登録する処理
-  const handleClickSignUp = async (e: MouseEvent<HTMLButtonElement>) => {
+  // LOGINボタンを押した時の処理
+  const handleClickLogin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
     try {
-      await createUserWithEmailAndPassword(
-        auth,
-        registerEmail,
-        registerPassword
-      );
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       router.push("/top");
     } catch (error) {
       if (error instanceof FirebaseError) {
-        alert("登録できません");
-        console.log(e);
+        alert("メールアドレスまたはパスワードが間違っています");
+        console.log(error);
       }
     }
   };
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>();
 
-  // ログインしているかどうかを判定する処理
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -107,8 +101,8 @@ export default function Signup() {
                   rounded="10"
                   border="none"
                   bgColor="#F0FFF4"
-                  value={registerEmail}
-                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
                 />
               </FormControl>
               <FormControl w="100%">
@@ -128,14 +122,15 @@ export default function Signup() {
                   rounded="10"
                   border="none"
                   bgColor="#F0FFF4"
-                  value={registerPassword}
-                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
                 />
               </FormControl>
             </Flex>
 
             <Flex alignItems="end" justifyContent="center" w="100%" h="54px">
               <Button
+                onClick={handleClickLogin}
                 w="204px"
                 h="54px"
                 rounded="50"
@@ -145,9 +140,8 @@ export default function Signup() {
                 borderColor="#000000"
                 fontSize="24px"
                 fontFamily="Gothic A1"
-                onClick={handleClickSignUp}
               >
-                SIGNUP
+                LOGIN
               </Button>
             </Flex>
           </Flex>
