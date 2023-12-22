@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Box,
   Button,
@@ -8,7 +9,7 @@ import {
   Spacer,
   Stack,
   Text,
-  Textarea,
+  Textarea
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { db } from "@/libs/firebase";
