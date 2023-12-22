@@ -18,36 +18,138 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { collection, onSnapshot, } from 'firebase/firestore';
-import { db } from '@/libs/firebase';
-import { useEffect, useState } from "react";
-import NextLink from 'next/link';
-import { doc, deleteDoc } from 'firebase/firestore';
+import {
+  QueryConstraint,
+  Timestamp,
+  collection,
+  onSnapshot,
+  query,
+  where,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "@/libs/firebase";
+import { ChangeEvent, useEffect, useState } from "react";
+import NextLink from "next/link";
+import ReactPaginate from "react-paginate";
+import styles from "../../styles/top.module.css";
+import Logout from "../logout/page";
 
 type Todo = {
-  id: string,
-  title: string,
-  priority: string,
-  status: string,
-  created_at: string,
-  updated_at: string,
-}
+  id: string;
+  title: string;
+  priority: string;
+  status: string;
+  created_at: Timestamp | string | Date;
+  updated_at: Timestamp | string | Date;
+};
+
+type documentId = string;
+type PriorityState = string;
+type StatusState = string;
+type Priority = HTMLSelectElement | null;
+type Status = HTMLSelectElement | null;
+type Search = HTMLInputElement | null;
 
 const formatDate = (date: Date): string => {
-  return date.getFullYear() + '-' + (1 + date.getMonth()).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0') + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
-}
+  return (
+    date.getFullYear() +
+    "-" +
+    (1 + date.getMonth()).toString().padStart(2, "0") +
+    "-" +
+    date.getDate().toString().padStart(2, "0") +
+    " " +
+    date.getHours().toString().padStart(2, "0") +
+    ":" +
+    date.getMinutes().toString().padStart(2, "0")
+  );
+};
 
 export default function Top() {
+  // 入力したTodoの配列
   const [taskList, setTaskList] = useState<Todo[]>([]);
+  // 1ページに表示するTodoの数
+  const itemsPerPage = 6;
+  // そのページの最初のTodo（配列）の番号を格納
+  const [itemOffset, setItemOffset] = useState(0);
+  // 今のページ数
+  const [pageCount, setPageCount] = useState(0);
+  //  1ページごとのTodoの配列
+  const [currentItems, setCurrentItems] = useState<Todo[]>([]);
+
+  //e: { selected: number }はページ数-1 (例：2ページ目を押すと1)
+  const handlePageClick = (e: { selected: number }) => {
+    const newOffset = (e.selected * itemsPerPage) % taskList.length;
+    setItemOffset(newOffset);
+  };
+  useEffect(() => {
+    // 次のページの最初のTodo（配列）の番号を取得（例：2ページ目なら6番目）
+    // 理由：slice関数で区切る時に区切りたい配列番号の次の配列番号の取得が必要になる為
+    const endOffset = itemOffset + itemsPerPage;
+    // Todoの配列を6個ずつ切り取る
+    setCurrentItems(taskList.slice(itemOffset, endOffset));
+    //全体のページ数を出す計算式（todoの数÷1ページに表示するtodoの数）小数点以下繰り上げ
+    setPageCount(Math.ceil(taskList.length / itemsPerPage));
+  }, [taskList, itemOffset]);
+  const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [priority, setPriority] = useState<string>("");
+
+  const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  const changeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+    setStatus(e.target.value);
+  };
+
+  const changePriority = (e: ChangeEvent<HTMLSelectElement>) => {
+    setPriority(e.target.value);
+  };
+
+  const clickReset = () => {
+    const priority: Priority = document.querySelector('[name="priority"]');
+    if (priority) {
+      priority.selectedIndex = 0;
+    }
+    setPriority("");
+
+    const status: Status = document.querySelector('[name="status"]');
+    if (status) {
+      status.selectedIndex = 0;
+    }
+    setStatus("");
+
+    const search: Search = document.querySelector('[name="search"]');
+    if (search) {
+      search.value = "";
+    }
+    setSearch("");
+  };
 
   useEffect(() => {
-    const q = collection(db, 'todos')
+    const wheres: QueryConstraint[] = [];
+    if (status) {
+      wheres.push(where("status", "==", status));
+      if (search) {
+        wheres.push(where("title", "==", search));
+      }
+    } else if (priority) {
+      wheres.push(where("priority", "==", priority));
+      if (search) {
+        wheres.push(where("title", "==", search));
+      }
+    }
+    const todosRef = collection(db, "todos");
+    const q = query(todosRef, ...wheres);
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const result: Todo[] = []
+      const result: Todo[] = [];
       querySnapshot.docs.forEach((doc) => {
-        const task = doc.data()
-        const createdAt = new Date(task.created_at.seconds * 1000)
-        const updatedAt = new Date(task.updated_at.seconds * 1000)
+        const task = doc.data();
+        const createdAt = new Date(task.created_at.seconds * 1000);
+        const updatedAt = new Date(task.updated_at.seconds * 1000);
         result.push({
           id: doc.id,
           title: task.title,
@@ -55,20 +157,59 @@ export default function Top() {
           status: task.status,
           created_at: formatDate(createdAt),
           updated_at: formatDate(updatedAt),
-        })
-      })
+        });
+      });
 
       setTaskList(result)
     })
   }, []);
 
-  const deleteTask = async (taskId:string) => {
+  const deleteTask = async (taskId: string) => {
     const taskDoc = doc(db, 'todos', taskId);
     try {
       await deleteDoc(taskDoc);
       console.log('タスクは正常に削除されました');
     } catch (error) {
       console.error('タスクの削除中にエラーが発生しました', error);
+    }
+  }
+
+  // priorityの変更
+  // データベース上の該当のドキュメントIDが分かっている場合
+  const updatePriority = async (
+    documentId: documentId,
+    selectedPriority: PriorityState
+  ) => {
+    const todoRef = doc(db, "todos", documentId);
+
+    // updateDocを用い、データベースの一部を書き換え
+    await updateDoc(todoRef, {
+      priority: selectedPriority,
+    });
+  };
+
+  // statusの変更
+  const updateStatus = async (
+    documentId: documentId,
+    selectedStatus: StatusState
+  ) => {
+    const todoRef = doc(db, "todos", documentId);
+
+    if (selectedStatus === "NOT STARTED") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "DOING",
+      });
+    } else if (selectedStatus === "DOING") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "DONE",
+      });
+    } else if (selectedStatus === "DONE") {
+      // updateDocを用い、データベースの一部を書き換え
+      await updateDoc(todoRef, {
+        status: "NOT STARTED",
+      });
     }
   };
 
@@ -88,15 +229,7 @@ export default function Top() {
           sx={{ fontWeight: "bold", px: "375" }}
         >
           TODO
-          <Button
-            color="#black"
-            fontWeight="bold"
-            w="120px"
-            h="56px"
-            fontSize="24px"
-          >
-            LOGOUT
-          </Button>
+          <Logout />
         </Box>
       </header>
       <nav>
@@ -120,6 +253,8 @@ export default function Top() {
                 border="1px solid"
                 my={2}
                 placeholder="Text"
+                name="search"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => changeSearch(e)}
               />
             </InputGroup>
           </Box>
@@ -131,6 +266,9 @@ export default function Top() {
               my={2}
               fontWeight="bold"
               border="1px solid"
+              name="status"
+              disabled={Boolean(priority)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => changeStatus(e)}
             >
               <option value="NOT STARTED">NOT STARTED</option>
               <option value="DOING">DOING</option>
@@ -145,6 +283,11 @@ export default function Top() {
               my={2}
               fontWeight="bold"
               border="1px solid"
+              name="priority"
+              disabled={Boolean(status)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                changePriority(e)
+              }
             >
               <option value="High">High</option>
               <option value="Middle">Middle</option>
@@ -159,12 +302,13 @@ export default function Top() {
               bgColor="#A0AEC0"
               fontSize="18px"
               border="1px solid"
+              onClick={() => clickReset()}
             >
               RESET
             </Button>
           </Box>
           <Box pt="32px">
-            <Link href='/create'>
+            <Link href="/create">
               <IconButton
                 aria-label="Search database"
                 icon={<EditIcon />}
@@ -237,10 +381,10 @@ export default function Top() {
               </Tr>
             </Thead>
             <Tbody>
-            {taskList.map((task) => (
+              {currentItems.map((task) => (
                 <Tr key={task.id}>
                   <Td fontWeight="bold">
-                    <Link as={NextLink} href={'/show/' + task.id}>
+                    <Link as={NextLink} href={"/show/" + task.id}>
                       {task.title}
                     </Link>
                   </Td>
@@ -252,36 +396,61 @@ export default function Top() {
                       border="1px solid"
                       borderRadius="30"
                       bgColor="#C6F6D5"
+                      onClick={() => updateStatus(task.id, task.status)}
                     >
-                      NOT STARTED
+                      {task.status}
                     </Button>
                   </Td>
                   <Td>
-                    <Select border="1px solid" borderColor="tomato" w="112px">
+                    <Select
+                      border="1px solid"
+                      borderColor="tomato"
+                      w="112px"
+                      value={task.priority}
+                      onChange={(e) => updatePriority(task.id, e.target.value)}
+                    >
+                      {/* デフォルトはFirebaseに登録されているもの */}
                       <option value="High">High</option>
                       <option value="Middle">Middle</option>
                       <option value="LOW">LOW</option>
                     </Select>
                   </Td>
                   <Td fontWeight="bold">
-                    {task.created_at}
+                    {typeof task.created_at === "string"
+                      ? task.created_at
+                      : null}
                   </Td>
                   <Td fontWeight="bold">
-                    {task.updated_at}
+                    {typeof task.updated_at === "string"
+                      ? task.updated_at
+                      : null}
                   </Td>
                   <Td>
-                    <Link as={NextLink} href={'/edit/' + task.id}>
+                    <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
                     </Link>
-                    <DeleteIcon   cursor="pointer" onClick={() => deleteTask(task.id)} />
+                    <DeleteIcon cursor="pointer" onClick={() => deleteTask(task.id)} />
                   </Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
         </TableContainer>
-      </main>
+      </main >
       <footer></footer>
+      <ReactPaginate
+        pageCount={pageCount} // 必須：総ページ数
+        onPageChange={handlePageClick}
+        previousLabel="<"
+        breakLabel="..."
+        nextLabel=">"
+        className={styles.pagination}
+        pageLinkClassName={styles.page} //paginationのリンクのクラス名
+        nextLinkClassName={styles.next} //'>'のリンクのクラス名
+        previousLinkClassName={styles.previous} //'<'のリンクのクラス名
+        marginPagesDisplayed={2} //一番最初と最後を基準にして、そこからいくつページ数を表示するか
+        breakClassName={styles.break} //「…」のクラス名
+      />
     </>
   );
 }
