@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Button,
   Box,
@@ -27,7 +28,7 @@ import {
   where,
   doc,
   updateDoc,
-  deleteDoc,
+  deleteDoc
 } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -437,7 +438,6 @@ export default function Top() {
           </Table>
         </TableContainer>
       </main >
-      <footer></footer>
       <ReactPaginate
         pageCount={pageCount} // 必須：総ページ数
         onPageChange={handlePageClick}
@@ -452,5 +452,5 @@ export default function Top() {
         breakClassName={styles.break} //「…」のクラス名
       />
     </>
-  );
+  )
 }
