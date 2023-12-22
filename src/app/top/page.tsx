@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Button,
   Box,
@@ -25,11 +26,9 @@ import {
   onSnapshot,
   query,
   where,
-  addDoc,
-  aggregateQuerySnapshotEqual,
   doc,
-  getDocs,
   updateDoc,
+  deleteDoc
 } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -162,9 +161,19 @@ export default function Top() {
         });
       });
 
-      setTaskList(result);
-    });
-  }, [search, status, priority]);
+      setTaskList(result)
+    })
+  }, []);
+
+  const deleteTask = async (taskId: string) => {
+    const taskDoc = doc(db, 'todos', taskId);
+    try {
+      await deleteDoc(taskDoc);
+      console.log('タスクは正常に削除されました');
+    } catch (error) {
+      console.error('タスクの削除中にエラーが発生しました', error);
+    }
+  }
 
   // priorityの変更
   // データベース上の該当のドキュメントIDが分かっている場合
@@ -421,15 +430,14 @@ export default function Top() {
                     <Link as={NextLink} href={"/edit/" + task.id}>
                       <EditIcon w="50px" />
                     </Link>
-                    <DeleteIcon />
+                    <DeleteIcon cursor="pointer" onClick={() => deleteTask(task.id)} />
                   </Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
         </TableContainer>
-      </main>
-      <footer></footer>
+      </main >
       <ReactPaginate
         pageCount={pageCount} // 必須：総ページ数
         onPageChange={handlePageClick}
@@ -444,5 +452,5 @@ export default function Top() {
         breakClassName={styles.break} //「…」のクラス名
       />
     </>
-  );
+  )
 }
