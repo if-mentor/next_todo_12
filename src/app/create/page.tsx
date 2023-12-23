@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import Logout from "../logout/page";
 
-const create = () => {
+const Create = () => {
   const router = useRouter();
   const [todoTitle, setTodoTitle] = useState<string>("");
   const [todoDetail, setTodoDetail] = useState<string>("");
@@ -168,4 +168,4 @@ const create = () => {
   );
 };
 
-export default create;
+export default Create;
